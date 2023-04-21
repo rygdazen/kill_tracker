@@ -44,7 +44,6 @@ end)
 
 -- Taken from Fracticality
 local function recreate_hud()
-	mod.kill_counter = 0
 	mod.display_tracker = mod:get("show_kill_counter") 
 	mod.show_kill_animation = mod:get("show_kill_animation")
 
@@ -81,6 +80,7 @@ function mod.on_game_state_changed(status, state_name)
 	-- Clear row values on game state enter
 	if state_name == 'GameplayStateRun' or state_name == "StateGameplay" and status == "enter" then
 		recreate_hud()
+		mod.kill_counter = 0
 	end
 end
 

@@ -3,10 +3,10 @@ return {
 		en = "Kill Tracker",
 	},
 	mod_description = {
-		en = "Tracks all mission kills on your HUD",
+		en = "Tracks all mission kills and kill combos on your HUD",
 	},
 	kill_counter = {
-		en = "Kill tracker",
+		en = "Kill Tracker",
 	},
 	show_kill_counter = {
 		en = "Show kill count",
