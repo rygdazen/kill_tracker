@@ -12,14 +12,14 @@ return {
 				type = "group",
 				sub_widgets = {
 					{
-						setting_id = "show_kill_counter",
+						setting_id = "show_kill_animation",
 						type = "checkbox",
 						default_value = true,
 					},
 					{
-						setting_id = "show_kill_animation",
+						setting_id = "show_kill_combo",
 						type = "checkbox",
-						default_value = false,
+						default_value = true,
 					},
 				},
 			}

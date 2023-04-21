@@ -18,7 +18,8 @@ local hud_elements = {
 
 mod.kill_counter = 0
 mod.animating = false
-mod.anim_kill_count = 0 --kills happening while animating
+mod.anim_kill_combo = 0 --kills happening while animating
+mod.highest_kill_combo = 0
 
 for _, hud_element in ipairs(hud_elements) do
 	mod:add_require_path(hud_element.filename)
@@ -44,8 +45,8 @@ end)
 
 -- Taken from Fracticality
 local function recreate_hud()
-	mod.display_tracker = mod:get("show_kill_counter") 
 	mod.show_kill_animation = mod:get("show_kill_animation")
+	mod.show_kill_combo = mod:get("show_kill_combo")
 
 	local ui_manager = Managers.ui
 	if ui_manager then
@@ -81,6 +82,7 @@ function mod.on_game_state_changed(status, state_name)
 	if state_name == 'GameplayStateRun' or state_name == "StateGameplay" and status == "enter" then
 		recreate_hud()
 		mod.kill_counter = 0
+		mod.highest_kill_combo = 0
 	end
 end
 
@@ -106,10 +108,9 @@ mod.increaseKillCounter = function(self)
 
 	if mod.show_kill_animation then
 		self.animating = true
-		self.anim_kill_count = self.anim_kill_count + 1
+		self.anim_kill_combo = self.anim_kill_combo + 1
 	end
 end
-
 
 -- Player from player_unit
 mod.player_from_unit = function(self, unit)
@@ -122,48 +123,3 @@ mod.player_from_unit = function(self, unit)
 	end
 	return nil
 end
-
---[[
-
--- Player from player_unit
-mod.player_from_unit = function(self, unit)
-	if unit then
-		local player_manager = Managers.player
-		for _, player in pairs(player_manager:players()) do
-			if player.player_unit == unit then
-				local account_id = player:account_id()
-				local localplayer = player_manager:local_player(1)
-				local local_player_id = localplayer:account_id()
-				if account_id == local_player_id then					
-					return player	
-				end				
-			end
-		end
-	end
-	return nil
-end
-
-mod:hook(CLASS.AttackReportManager, "add_attack_result",
-function(func, self, damage_profile, attacked_unit, attacking_unit, attack_direction, hit_world_position, hit_weakspot, damage,
-	attack_result, attack_type, damage_efficiency, ...)
-
-	local player = mod:player_from_unit(attacking_unit)
-	if player then
-		local unit_data_extension = ScriptUnit.has_extension(attacked_unit, "unit_data_system")
-		local breed_or_nil = unit_data_extension and unit_data_extension:breed()
-		local target_is_minion = breed_or_nil and Breed.is_minion(breed_or_nil)		
-		if target_is_minion then
-			if attack_result == "died" then
-				mod:increaseKillCounter()
-			end
-		end
-	end
-	-- Original function
-	return func(self, damage_profile, attacked_unit, attacking_unit, attack_direction, hit_world_position, hit_weakspot, damage, attack_result, attack_type, damage_efficiency, ...)
-end)
-
-
-
-
-CommandWindow.print('console log')
-]]--

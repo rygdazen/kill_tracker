@@ -17,7 +17,15 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 0, -25, 10 },
+		position = { -125, -20, 10 },
+	},
+	counterLabelContainer = {
+		parent = "screen",
+		scale = "fit",
+		vertical_alignment = "bottom",
+		horizontal_alignment = "center",
+		size = size,
+		position = { -75, -20, 10 },
 	},
 	animContainer = {
 		parent = "screen",
@@ -27,11 +35,38 @@ local scenegraph_definition = {
 		size = sizeAnim,
 		position = { 0, -150, 10 },
 	},
+	comboContainer = {
+		parent = "screen",
+		scale = "fit",
+		vertical_alignment = "bottom",
+		horizontal_alignment = "center",
+		size = size,
+		position = { 75, -20, 10 },
+	},
+	comboLabelContainer = {
+		parent = "screen",
+		scale = "fit",
+		vertical_alignment = "bottom",
+		horizontal_alignment = "center",
+		size = size,
+		position = { 125, -20, 10 },
+	},
 }
 
 local styleCounter = {
 	line_spacing = 1.2,
 	font_size = font_size,
+	drop_shadow = true,
+	font_type = "machine_medium",
+	text_color = UIHudSettings.color_tint_main_1,
+	size = size,
+	text_horizontal_alignment = "center",
+	text_vertical_alignment = "center",
+}
+
+local styleCounterLabel = {
+	line_spacing = 1.2,
+	font_size = font_size/2,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = UIHudSettings.color_tint_main_1,
@@ -52,6 +87,28 @@ local styleAnimated = {
 	offset = { 0, 10, 10 },
 }
 
+local comboCounter = {
+	line_spacing = 1.2,
+	font_size = font_size,
+	drop_shadow = true,
+	font_type = "machine_medium",
+	text_color = UIHudSettings.color_tint_main_1,
+	size = size,
+	text_horizontal_alignment = "center",
+	text_vertical_alignment = "center",
+}
+
+local comboCounterLabel = {
+	line_spacing = 1.2,
+	font_size = font_size/2,
+	drop_shadow = true,
+	font_type = "machine_medium",
+	text_color = UIHudSettings.color_tint_main_1,
+	size = size,
+	text_horizontal_alignment = "center",
+	text_vertical_alignment = "center",
+}
+
 local widget_definitions = {
 	killCounter = UIWidget.create_definition(
 		{ {
@@ -62,6 +119,15 @@ local widget_definitions = {
 		} },
 		"counterContainer"
 	),
+	killCounterLabel = UIWidget.create_definition(
+		{ {
+			value_id = "text",
+			style_id = "text",
+			pass_type = "text",
+			style = styleCounterLabel,
+		} },
+		"counterLabelContainer"
+	),
 	animatedCounter = UIWidget.create_definition(
 		{ {
 			value_id = "text",
@@ -70,6 +136,24 @@ local widget_definitions = {
 			style = styleAnimated,
 		} },
 		"animContainer"
+	),
+	killCombo = UIWidget.create_definition(
+		{ {
+			value_id = "text",
+			style_id = "text",
+			pass_type = "text",
+			style = comboCounter,
+		} },
+		"comboContainer"
+	),
+	killComboLabel = UIWidget.create_definition(
+		{ {
+			value_id = "text",
+			style_id = "text",
+			pass_type = "text",
+			style = comboCounterLabel,
+		} },
+		"comboLabelContainer"
 	),
 }
 
@@ -89,13 +173,14 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 
 	if mod.animating then
 		mod.animating = false
+		self.anim_pos_y_offset = 0
 		-- CommandWindow.print("animating!")
 		-- CommandWindow.print(self._widgets_by_name.animatedCounter.style.text.offset[2])
 		self.animating = true
 	end
 
 	if self.animating then
-		self.anim_pos_y_offset = self.anim_pos_y_offset + (self.anim_pos_y_offset / 15) + (1.5 * dt)
+		self.anim_pos_y_offset = self.anim_pos_y_offset + (self.anim_pos_y_offset / 30) + (1.5 * dt)
 
 		local prev_alpha = self._widgets_by_name.animatedCounter.alpha_multiplier or 0
 
@@ -108,20 +193,35 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 			self._widgets_by_name.animatedCounter.style.text.offset[2] = 0
 			self._widgets_by_name.animatedCounter.alpha_multiplier = 0
 			self.animating = false
-			mod.anim_kill_count = 0
+			if mod.show_kill_combo then
+				if mod.highest_kill_combo < mod.anim_kill_combo then
+					mod.highest_kill_combo = mod.anim_kill_combo
+				end
+			end
+			mod.anim_kill_combo = 0
 		end
 	end
 
-	if mod.anim_kill_count > 0 then
-		self._widgets_by_name.animatedCounter.content.text = "+" .. tostring(mod.anim_kill_count)
+	if mod.anim_kill_combo > 0 then
+		self._widgets_by_name.animatedCounter.content.text = "+" .. tostring(mod.anim_kill_combo)
 	else
 		self._widgets_by_name.animatedCounter.content.text = ""
 	end
 
-	if self.show_counter and mod.display_tracker then
+	if self.show_counter then
 		self._widgets_by_name.killCounter.content.text = tostring(mod.kill_counter or "Fuck")
+		self._widgets_by_name.killCounterLabel.content.text = tostring(mod:localize("kill_count_hud"))
 	else
 		self._widgets_by_name.killCounter.content.text = tostring("")
+		self._widgets_by_name.killCounterLabel.content.text = tostring("")
+	end
+
+	if mod.highest_kill_combo > 0 then
+		self._widgets_by_name.killCombo.content.text = tostring(mod.highest_kill_combo or "Shit")
+		self._widgets_by_name.killComboLabel.content.text = tostring(mod:localize("kill_combo_hud"))
+	else
+		self._widgets_by_name.killCombo.content.text = tostring("")
+		self._widgets_by_name.killComboLabel.content.text = tostring("")
 	end
 end
 
