@@ -8,16 +8,16 @@ return {
 	options = {
 		widgets = {
 			{
-				setting_id = "kill_counter",
+				setting_id = "kill_combo_options",
 				type = "group",
 				sub_widgets = {
 					{
-						setting_id = "show_kill_animation",
+						setting_id = "show_kill_combos",
 						type = "checkbox",
 						default_value = true,
 					},
 					{
-						setting_id = "show_kill_combo",
+						setting_id = "show_cringe",
 						type = "checkbox",
 						default_value = true,
 					},

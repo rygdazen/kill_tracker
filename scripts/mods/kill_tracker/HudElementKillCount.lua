@@ -4,11 +4,12 @@ local Text = require("scripts/utilities/ui/text")
 local UIWorkspaceSettings = require("scripts/settings/ui/ui_workspace_settings")
 local UIHudSettings = require("scripts/settings/ui/ui_hud_settings")
 local UIWidget = require("scripts/managers/ui/ui_widget")
+local UIFonts = mod:original_require("scripts/managers/ui/ui_fonts")
 
 local font_size = 32
-local font_size_anim = 24
+local font_size_anim = 140
 local size = { 60, font_size }
-local sizeAnim = { 60, font_size_anim }
+local sizeAnim = { 1000, font_size_anim }
 local scenegraph_definition = {
 	screen = UIWorkspaceSettings.screen,
 	counterContainer = {
@@ -29,11 +30,10 @@ local scenegraph_definition = {
 	},
 	animContainer = {
 		parent = "screen",
-		scale = "fit",
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		size = sizeAnim,
-		position = { 0, -150, 10 },
+		position = { 0, -220, 10 },
 	},
 	comboContainer = {
 		parent = "screen",
@@ -81,9 +81,9 @@ local styleAnimated = {
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = UIHudSettings.color_tint_main_1,
-	size = size,
+	size = sizeAnim,
 	text_horizontal_alignment = "center",
-	text_vertical_alignment = "center",
+	text_vertical_alignment = "bottom",
 	offset = { 0, 10, 10 },
 }
 
@@ -157,6 +157,12 @@ local widget_definitions = {
 	),
 }
 
+local KillstreakLabels = {
+	{ 10, "Monsterkill" },
+	{ 50, "Godlike" },
+	{ 100, "For the Ass!" }
+}
+
 local HudElementKillCount = class("HudElementKillCount", "HudElementBase")
 
 HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
@@ -172,31 +178,37 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 	HudElementKillCount.super.update(self, dt, t, ui_renderer, render_settings, input_service)	
 
 	if mod.animating then
+		-- This only triggers once and is immediately unset 
 		mod.animating = false
-		self.anim_pos_y_offset = 0
-		-- CommandWindow.print("animating!")
-		-- CommandWindow.print(self._widgets_by_name.animatedCounter.style.text.offset[2])
+
 		self.animating = true
+		self.anim_pos_y_offset = 0
+		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
 	end
 
 	if self.animating then
-		self.anim_pos_y_offset = self.anim_pos_y_offset + (self.anim_pos_y_offset / 30) + (1.5 * dt)
+		self.anim_pos_y_offset = self.anim_pos_y_offset + (self.anim_pos_y_offset / 30) + (1.5 * dt) --30
 
-		local prev_alpha = self._widgets_by_name.animatedCounter.alpha_multiplier or 0
+		local anim_progress = self.anim_pos_y_offset / 50
 
-		self._widgets_by_name.animatedCounter.alpha_multiplier = math.min(prev_alpha + (4 * dt), 1)
+		local prev_alpha = self._widgets_by_name.animatedCounter.alpha_multiplier or 1
+		local alpha = 1 - anim_progress
+
+		local anim_font_scale = math.min(1, anim_progress * 300)
+		local font_scale = math.max(anim_font_scale, mod.anim_kill_combo)
+
+		self._widgets_by_name.animatedCounter.style.text.font_size = (32 * anim_font_scale) + math.ceil(font_scale - 0.5)
+
+		self._widgets_by_name.animatedCounter.alpha_multiplier = alpha
 		self._widgets_by_name.animatedCounter.style.text.offset[2] = -self.anim_pos_y_offset
 
-		-- CommandWindow.print(self.anim_pos_y_offset)
 		if self.anim_pos_y_offset > 50 then
 			self.anim_pos_y_offset = 0
 			self._widgets_by_name.animatedCounter.style.text.offset[2] = 0
-			self._widgets_by_name.animatedCounter.alpha_multiplier = 0
+			self._widgets_by_name.animatedCounter.alpha_multiplier = 1
 			self.animating = false
-			if mod.show_kill_combo then
-				if mod.highest_kill_combo < mod.anim_kill_combo then
-					mod.highest_kill_combo = mod.anim_kill_combo
-				end
+			if mod.highest_kill_combo < mod.anim_kill_combo then
+				mod.highest_kill_combo = mod.anim_kill_combo
 			end
 			mod.anim_kill_combo = 0
 		end
@@ -210,7 +222,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 
 	if self.show_counter then
 		self._widgets_by_name.killCounter.content.text = tostring(mod.kill_counter or "Fuck")
-		self._widgets_by_name.killCounterLabel.content.text = tostring(mod:localize("kill_count_hud"))
+		self._widgets_by_name.killCounterLabel.content.text = tostring(mod.kill_counter_label)
 	else
 		self._widgets_by_name.killCounter.content.text = tostring("")
 		self._widgets_by_name.killCounterLabel.content.text = tostring("")
@@ -218,7 +230,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 
 	if mod.highest_kill_combo > 0 then
 		self._widgets_by_name.killCombo.content.text = tostring(mod.highest_kill_combo or "Shit")
-		self._widgets_by_name.killComboLabel.content.text = tostring(mod:localize("kill_combo_hud"))
+		self._widgets_by_name.killComboLabel.content.text = tostring(mod.kill_combo_label )
 	else
 		self._widgets_by_name.killCombo.content.text = tostring("")
 		self._widgets_by_name.killComboLabel.content.text = tostring("")

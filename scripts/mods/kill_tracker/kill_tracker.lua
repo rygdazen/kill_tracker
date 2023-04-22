@@ -20,6 +20,8 @@ mod.kill_counter = 0
 mod.animating = false
 mod.anim_kill_combo = 0 --kills happening while animating
 mod.highest_kill_combo = 0
+mod.kill_counter_label = mod:localize("kill_count_hud")
+mod.kill_combo_label = mod:localize("kill_combo_hud")
 
 for _, hud_element in ipairs(hud_elements) do
 	mod:add_require_path(hud_element.filename)
@@ -45,8 +47,8 @@ end)
 
 -- Taken from Fracticality
 local function recreate_hud()
-	mod.show_kill_animation = mod:get("show_kill_animation")
-	mod.show_kill_combo = mod:get("show_kill_combo")
+	mod.show_kill_combos = mod:get("show_kill_combos")
+	mod.show_killstreak_text = mod:get("show_cringe")
 
 	local ui_manager = Managers.ui
 	if ui_manager then
@@ -106,7 +108,7 @@ end)
 mod.increaseKillCounter = function(self)
 	self.kill_counter = self.kill_counter + 1
 
-	if mod.show_kill_animation then
+	if mod.show_kill_combos then
 		self.animating = true
 		self.anim_kill_combo = self.anim_kill_combo + 1
 	end
