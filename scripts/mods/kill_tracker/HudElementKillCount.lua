@@ -170,12 +170,21 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 		scenegraph_definition = scenegraph_definition,
 		widget_definitions = widget_definitions,
 	})
-	self.show_counter = not mod._is_in_hub()
+	self._is_in_hub = mod._is_in_hub()
 	self.anim_pos_y_offset = 0
 end
 
 HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings, input_service)
 	HudElementKillCount.super.update(self, dt, t, ui_renderer, render_settings, input_service)	
+
+	if self._is_in_hub then		
+		self._widgets_by_name.killCounter.content.text = tostring("")
+		self._widgets_by_name.killCounterLabel.content.text = tostring("")
+		self._widgets_by_name.killCombo.content.text = tostring("")
+		self._widgets_by_name.killComboLabel.content.text = tostring("")
+		self._widgets_by_name.animatedCounter.content.text = tostring("")
+		return
+	end
 
 	if mod.animating then
 		-- This only triggers once and is immediately unset 
@@ -187,14 +196,14 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 	end
 
 	if self.animating then
-		self.anim_pos_y_offset = self.anim_pos_y_offset + (self.anim_pos_y_offset / 30) + (1.5 * dt) --30
+		self.anim_pos_y_offset = self.anim_pos_y_offset + (self.anim_pos_y_offset / 60) + (1.5 * dt) 
 
 		local anim_progress = self.anim_pos_y_offset / 50
 
 		local prev_alpha = self._widgets_by_name.animatedCounter.alpha_multiplier or 1
 		local alpha = 1 - anim_progress
 
-		local anim_font_scale = math.min(1, anim_progress * 300)
+		local anim_font_scale = math.min(1, anim_progress * 350)
 		local font_scale = math.max(anim_font_scale, mod.anim_kill_combo)
 
 		self._widgets_by_name.animatedCounter.style.text.font_size = (32 * anim_font_scale) + math.ceil(font_scale - 0.5)
@@ -214,21 +223,17 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		end
 	end
 
-	if mod.anim_kill_combo > 0 then
+	-- HUD Kill Counter
+	self._widgets_by_name.killCounter.content.text = tostring(mod.kill_counter or "Fuck")
+	self._widgets_by_name.killCounterLabel.content.text = tostring(mod.kill_counter_label)
+
+	-- HUD Kill Combos
+	if mod.anim_kill_combo > 0 and mod.show_kill_combos then
 		self._widgets_by_name.animatedCounter.content.text = "+" .. tostring(mod.anim_kill_combo)
 	else
-		self._widgets_by_name.animatedCounter.content.text = ""
+		self._widgets_by_name.animatedCounter.content.text = tostring("")
 	end
-
-	if self.show_counter then
-		self._widgets_by_name.killCounter.content.text = tostring(mod.kill_counter or "Fuck")
-		self._widgets_by_name.killCounterLabel.content.text = tostring(mod.kill_counter_label)
-	else
-		self._widgets_by_name.killCounter.content.text = tostring("")
-		self._widgets_by_name.killCounterLabel.content.text = tostring("")
-	end
-
-	if mod.highest_kill_combo > 0 then
+	if mod.highest_kill_combo > 0 and mod.show_kill_combos then
 		self._widgets_by_name.killCombo.content.text = tostring(mod.highest_kill_combo or "Shit")
 		self._widgets_by_name.killComboLabel.content.text = tostring(mod.kill_combo_label )
 	else
