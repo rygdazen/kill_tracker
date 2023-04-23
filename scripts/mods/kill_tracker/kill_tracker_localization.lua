@@ -10,8 +10,8 @@ return {
 	mod_description = {
 		en = "Tracks all mission kills and kill combos on your HUD and diverts your attention away from the objective",
 		de = "Verfolgt alle Missionskills und Kill-Combos auf deinem HUD und lenkt deine Aufmerksamkeit vom Missionsziel ab",
-		es = "Rastrea todas las muertes y combos de muertes de la misión en tu HUD y desvía tu atención del objetivo.",
-		fr = "Suivi de tous les meurtres et combos de meurtres de la mission sur votre HUD et détournement de votre attention de l'objectif.",
+		es = "Rastrea todas las muertes y combos de muertes de la misión en tu HUD y desvía tu atención del objetivo",
+		fr = "Suivi de tous les meurtres et combos de meurtres de la mission sur votre HUD et détournement de votre attention de l'objectif",
 		ru = "Отслеживает все убийства и комбинации убийств в миссии на вашем HUD и отвлекает ваше внимание от цели",
 		["zh-cn"] = "在你的HUD上跟踪所有的任务杀戮和杀戮组合，并将你的注意力从目标上转移开。",
 	},	
@@ -59,7 +59,7 @@ return {
 		en = "Show Cringe",
 	},
 	show_cringe_description ={
-		en = "LOLWTFOMGBBQ DIAMONDS ARE FOREVER.",
+		en = "DiamondsAreForeverLOLcheeseBURGAH",
 	},
 }
 
