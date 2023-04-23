@@ -10,6 +10,7 @@ local font_size = 32
 local font_size_anim = 140
 local size = { 60, font_size }
 local sizeAnim = { 1000, font_size_anim }
+local default_color = Color.terminal_text_header(255, true)
 local scenegraph_definition = {
 	screen = UIWorkspaceSettings.screen,
 	counterContainer = {
@@ -58,7 +59,7 @@ local styleCounter = {
 	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -69,7 +70,7 @@ local styleCounterLabel = {
 	font_size = font_size/2,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -80,7 +81,7 @@ local styleAnimated = {
 	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = default_color,
 	size = sizeAnim,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "bottom",
@@ -92,7 +93,7 @@ local comboCounter = {
 	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -103,7 +104,7 @@ local comboCounterLabel = {
 	font_size = font_size/2,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -193,6 +194,23 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self.animating = true
 		self.anim_pos_y_offset = 0
 		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
+
+		--[[
+		self._set_color(3)
+		self._set_color(4)
+		]]
+		CommandWindow.print(self._widgets_by_name.animatedCounter.style.text.text_color[2])
+		CommandWindow.print(self._widgets_by_name.animatedCounter.style.text.text_color[3])
+		CommandWindow.print(self._widgets_by_name.animatedCounter.style.text.text_color[4])
+		CommandWindow.print('----------------------------------')
+		--if (mod.anim_kill_combo % 2) == 0 then 
+			if self._widgets_by_name.animatedCounter.style.text.text_color[3] > 0 then
+				self._widgets_by_name.animatedCounter.style.text.text_color[3] = self._widgets_by_name.animatedCounter.style.text.text_color[3] - 1
+			end
+			if self._widgets_by_name.animatedCounter.style.text.text_color[4] > 0 then
+				self._widgets_by_name.animatedCounter.style.text.text_color[4] = self._widgets_by_name.animatedCounter.style.text.text_color[4] - 1
+			end
+		--end
 	end
 
 	if self.animating then
@@ -220,6 +238,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 				mod.highest_kill_combo = mod.anim_kill_combo
 			end
 			mod.anim_kill_combo = 0
+			self._widgets_by_name.animatedCounter.style.text.text_color = default_color
 		end
 	end
 
@@ -241,5 +260,23 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self._widgets_by_name.killComboLabel.content.text = tostring("")
 	end
 end
+
+--[[
+set color increasingly red 
+color[1] = Alpha
+color[2] = Red
+color[3] = Green
+color[4] = Blue
+]]
+--[[
+HudElementKillCount._set_color = function(colorIndex)
+	if self._widgets_by_name.animatedCounter.style.text.text_color[colorIndex] > 0 then
+		self._widgets_by_name.animatedCounter.style.text.text_color[colorIndex] = self._widgets_by_name.animatedCounter.style.text.text_color[colorIndex] - mod.anim_kill_combo * 100
+		if self._widgets_by_name.animatedCounter.style.text.text_color[colorIndex] < 0 then
+			self._widgets_by_name.animatedCounter.style.text.text_color[colorIndex] = 0
+		end
+	end
+end
+]]
 
 return HudElementKillCount
