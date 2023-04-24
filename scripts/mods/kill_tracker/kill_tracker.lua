@@ -1,3 +1,6 @@
+-- TODO: combo still running after settings changed
+-- TODO: for the emprah, kill streak texts
+
 local mod = get_mod("kill_tracker")
 
 mod:io_dofile("kill_tracker/scripts/mods/kill_tracker/utils")
