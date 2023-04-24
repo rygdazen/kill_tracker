@@ -186,14 +186,6 @@ local widget_definitions = {
 	),
 }
 
---[[
-local KillstreakLabels = {
-	{ 10, "Monsterkill" },
-	{ 50, "Godlike" },
-	{ 100, "For the Emperor!" }
-}
-]]
-
 local HudElementKillCount = class("HudElementKillCount", "HudElementBase")
 
 local function _color_fade_fully_red()
@@ -240,16 +232,28 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 	self.timer_running = false
 	self.combo_timer_percentage = 0
 	self.combo_duration_seconds = 2.5
+	self.anim_kill_combo = 0
+	self.kill_counter = 0
+	self.highest_kill_combo = 0
+
+	mod.add_to_killcounter = function()
+		self:add_to_killcounter()
+	end
+end
+
+HudElementKillCount.add_to_killcounter = function(self)
+	self.anim_kill_combo = self.anim_kill_combo + 1
+	self.kill_counter = self.kill_counter + 1
+
+	self:_start_combo_timer()
 end
 
 HudElementKillCount._start_combo_timer = function(self)
 	self.timer_running = true
-	self.combo_timer = 0	
+	self.combo_timer = 0
 	 
-	mod.animating = false
-	
 	self._widgets_by_name.animatedCounter.alpha_multiplier = 1
-	if mod.anim_kill_combo > 21 and mod.show_cringe then
+	if self.anim_kill_combo > 21 and mod.show_cringe then
 		_set_red_color_fade(_scale_by_cringe_factor(2.9), self._widgets_by_name.animatedCounter)
 	end	
 end
@@ -267,14 +271,14 @@ HudElementKillCount._update_combo_timer = function(self, dt)
 		self._widgets_by_name.animatedCounter.style.text.offset[2] = 0
 		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
 		self.animating = false
-		if mod.highest_kill_combo < mod.anim_kill_combo then
-			mod.highest_kill_combo = mod.anim_kill_combo
+		if self.highest_kill_combo < self.anim_kill_combo then
+			self.highest_kill_combo = self.anim_kill_combo
 		end
-		mod.anim_kill_combo = 0
+		self.anim_kill_combo = 0
 		if mod.show_cringe then
 			_reset_red_color_fade(self._widgets_by_name.animatedCounter)				
 		end
-	end		
+	end
 end
 
 -- HudElementKillCount._test_dt = function(self, widget)
@@ -305,11 +309,6 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self._widgets_by_name.testWidget.content.text = tostring("")
 		return
 	end
-
-	if mod.animating then
-		self:_start_combo_timer()
-	end
-
 	-- self:_test_dt(self._widgets_by_name.testWidget)
 
 	if self.timer_running then
@@ -328,7 +327,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		local anim_font_scale = math.min(1, anim_pos_y_offset * 2)
 		local font_scale = 1
 		if mod.show_cringe then
-			font_scale = _scale_by_cringe_factor(math.max(anim_font_scale, mod.anim_kill_combo))
+			font_scale = _scale_by_cringe_factor(math.max(anim_font_scale, self.anim_kill_combo))
 		end
 		self._widgets_by_name.animatedCounter.style.text.font_size = (32 * anim_font_scale) + math.ceil(font_scale - 0.5)
 
@@ -342,17 +341,19 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 	end
 
 	-- HUD Kill Counter
-	self._widgets_by_name.killCounter.content.text = tostring(mod.kill_counter or "Fuck")
+	self._widgets_by_name.killCounter.content.text = tostring(self.kill_counter or "Fuck")
 	self._widgets_by_name.killCounterLabel.content.text = tostring(mod.kill_counter_label)
 
 	-- HUD Kill Combos
-	if mod.anim_kill_combo > 0 and mod.show_kill_combos and self.timer_running then
-		self._widgets_by_name.animatedCounter.content.text = "+" .. tostring(mod.anim_kill_combo)
+	if self.anim_kill_combo > 0 and mod.show_kill_combos and self.timer_running then
+		self._widgets_by_name.animatedCounter.content.text = "+" .. tostring(self.anim_kill_combo)
 	else
 		self._widgets_by_name.animatedCounter.content.text = tostring("")
 	end
-	if mod.highest_kill_combo > 0 and mod.show_kill_combos then
-		self._widgets_by_name.killCombo.content.text = tostring(mod.highest_kill_combo or "Shit")
+
+	-- local kill_combo = math.max(self.highest_kill_combo, self.anim_kill_combo)
+	if self.highest_kill_combo > 0 and mod.show_kill_combos then
+		self._widgets_by_name.killCombo.content.text = tostring(self.highest_kill_combo or "Shit")
 		self._widgets_by_name.killComboLabel.content.text = tostring(mod.kill_combo_label)
 	else
 		self._widgets_by_name.killCombo.content.text = tostring("")

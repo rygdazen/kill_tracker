@@ -1,5 +1,6 @@
 -- TODO: combo still running after settings changed
 -- TODO: for the emprah, kill streak texts
+-- TODO: cringe factor needs to add shaking and pulsating texts
 
 local mod = get_mod("kill_tracker")
 
@@ -16,24 +17,24 @@ local hud_elements = {
 			"alive",
 			"communication_wheel",
 		},
-	}
+	},
+	{
+		filename = "kill_tracker/scripts/mods/kill_tracker/HudElementKillstreak",
+		class_name = "HudElementKillstreak",
+		visibility_groups = {
+			"tactical_overlay",
+			"alive",
+			"communication_wheel",
+		},
+	},
 }
 
 mod.kill_counter = 0
-mod.animating = false
-mod.anim_kill_combo = 0 --kills happening while animating
 mod.highest_kill_combo = 0
 mod.kill_counter_label = mod:localize("kill_count_hud")
 mod.kill_combo_label = mod:localize("kill_combo_hud")
 mod.default_color = Color.terminal_text_header(255, true)
 mod.fade_color = Color.terminal_text_header(255, true)
---[[
-	terminal_text_header
-	a: 255
-	r: 216
-	g: 229
-	b: 207
-]]
 
 for _, hud_element in ipairs(hud_elements) do
 	mod:add_require_path(hud_element.filename)
@@ -62,6 +63,7 @@ local function recreate_hud()
 	mod.show_kill_combos = mod:get("show_kill_combos")
 	mod.show_cringe = mod:get("show_cringe")
 	mod.cringe_factor = mod:get("cringe_factor")
+	mod.show_killstreaks = mod:get("show_killstreaks")
 
 	local ui_manager = Managers.ui
 	if ui_manager then
@@ -92,12 +94,18 @@ mod.on_setting_changed = function()
 	recreate_hud()
 end
 
+mod.add_to_killstreak_counter = function()
+	mod:notify("wtf how did u get here")
+end
+
+mod.add_to_killcounter = function()
+	mod:notify("wtf how did u get here")
+end
+
 function mod.on_game_state_changed(status, state_name)
 	-- Clear row values on game state enter
 	if state_name == 'GameplayStateRun' or state_name == "StateGameplay" and status == "enter" then
 		recreate_hud()
-		mod.kill_counter = 0
-		mod.highest_kill_combo = 0
 	end
 end
 
@@ -112,20 +120,12 @@ function(self, damage_profile, attacked_unit, attacking_unit, attack_direction, 
 		local target_is_minion = breed_or_nil and Breed.is_minion(breed_or_nil)		
 		if target_is_minion then
 			if attack_result == "died" then
-				mod:increaseKillCounter()
+				mod.add_to_killcounter()
+				mod.add_to_killstreak_counter()
 			end
 		end
 	end
 end)
-
-mod.increaseKillCounter = function(self)
-	self.kill_counter = self.kill_counter + 1
-
-	if mod.show_kill_combos then
-		self.animating = true
-		self.anim_kill_combo = self.anim_kill_combo + 1
-	end
-end
 
 -- Player from player_unit
 mod.player_from_unit = function(self, unit)

@@ -27,6 +27,11 @@ return {
 					  default_value   = 100,
 					  range           = {50, 1000},
 					},
+					{
+						setting_id = "show_killstreaks",
+						type = "checkbox",
+						default_value = false,
+					},
 				},
 			}
 		},

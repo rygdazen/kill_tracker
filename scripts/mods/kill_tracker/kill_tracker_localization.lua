@@ -77,6 +77,22 @@ return {
 	cringe_factor_description ={
 		en = "Ja, nur bis 1000, Robert.",
 	},
+	show_killstreaks ={
+		en = "Show Killstreaks",
+		de = "Zeige Cringe",
+		es = "mostrar Cringe",
+		fr = "montrer de la Cringe",
+		ru = "показывать Cringe",
+		["zh-cn"] = "显示畏缩",
+	},
+	show_killstreaks_description ={
+		en = "00s Throwback-Mode",
+		de = "Zeige Cringe",
+		es = "mostrar Cringe",
+		fr = "montrer de la Cringe",
+		ru = "показывать Cringe",
+		["zh-cn"] = "显示畏缩",
+	},	
 }
 
 --[[
