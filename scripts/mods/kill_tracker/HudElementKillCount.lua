@@ -176,33 +176,34 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 	self.anim_pos_y_offset = 0
 end
 
-local function _set_red_color_fade(factor)
-	if mod.fade_color[2] < 255 then
-		mod.fade_color[2] = mod.fade_color[2] + 1 * factor
-		if mod.fade_color[2] > 255 then
-			mod.fade_color[2] = 255
-		end
-	end
-	if mod.fade_color[3] > 0 then
-		mod.fade_color[3] = mod.fade_color[3] - 1 * factor
-		if mod.fade_color[3] < 0 then
-			mod.fade_color[3] = 0
-		end
-	end
-	if mod.fade_color[4] > 0 then
-		mod.fade_color[4] = mod.fade_color[4] - 1 * factor
-		if mod.fade_color[4] < 0 then
-			mod.fade_color[4] = 0
-		end
-	end
-end
-
 local function _color_fade_fully_red()
 	return((mod.fade_color[2] == 255) and (mod.fade_color[3] == 0) and (mod.fade_color[4] == 0))	
 end
 
-local function _reset_red_color_fade()
+local function _set_red_color_fade(factor, widget)
+	if _color_fade_fully_red() then
+		return
+	end
+
+	mod.fade_color[2] = mod.fade_color[2] + 1 * factor
+	if mod.fade_color[2] > 255 then
+		mod.fade_color[2] = 255
+	end
+	mod.fade_color[3] = mod.fade_color[3] - 1 * factor
+	if mod.fade_color[3] < 0 then
+		mod.fade_color[3] = 0
+	end
+	mod.fade_color[4] = mod.fade_color[4] - 1 * factor
+	if mod.fade_color[4] < 0 then
+		mod.fade_color[4] = 0
+	end
+
+	widget.style.text.text_color = table.clone(mod.fade_color)
+end
+
+local function _reset_red_color_fade(widget)
 	mod.fade_color = table.clone(mod.default_color)
+	widget.style.text.text_color = table.clone(mod.default_color)
 end
 
 local function _scale_by_cringe_factor(input_value)
@@ -228,9 +229,8 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self.animating = true
 		self.anim_pos_y_offset = 0
 		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
-		if mod.anim_kill_combo > 21 and mod.show_cringe then 
-			_set_red_color_fade(_scale_by_cringe_factor(2.9))
-			self._widgets_by_name.animatedCounter.style.text.text_color = table.clone(mod.fade_color)
+		if mod.anim_kill_combo > 21 and mod.show_cringe then
+			_set_red_color_fade(_scale_by_cringe_factor(2.9), self._widgets_by_name.animatedCounter)
 		end	
 	end
 
@@ -267,8 +267,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 			end
 			mod.anim_kill_combo = 0
 			if mod.show_cringe then
-				_reset_red_color_fade()
-				self._widgets_by_name.animatedCounter.style.text.text_color = table.clone(mod.default_color)				
+				_reset_red_color_fade(self._widgets_by_name.animatedCounter)				
 			end
 		end
 	end
