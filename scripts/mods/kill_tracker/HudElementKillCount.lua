@@ -58,7 +58,7 @@ local styleCounter = {
 	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -69,7 +69,7 @@ local styleCounterLabel = {
 	font_size = font_size/2,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -80,7 +80,7 @@ local styleAnimated = {
 	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = mod.default_color,
 	size = sizeAnim,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "bottom",
@@ -92,7 +92,7 @@ local comboCounter = {
 	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -103,7 +103,7 @@ local comboCounterLabel = {
 	font_size = font_size/2,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = UIHudSettings.color_tint_main_1,
+	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
@@ -157,11 +157,13 @@ local widget_definitions = {
 	),
 }
 
+--[[
 local KillstreakLabels = {
 	{ 10, "Monsterkill" },
 	{ 50, "Godlike" },
-	{ 100, "For the Ass!" }
+	{ 100, "For the Emperor!" }
 }
+]]
 
 local HudElementKillCount = class("HudElementKillCount", "HudElementBase")
 
@@ -172,6 +174,40 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 	})
 	self._is_in_hub = mod._is_in_hub()
 	self.anim_pos_y_offset = 0
+end
+
+local function _color_fade_fully_red()
+	return((mod.fade_color[2] == 255) and (mod.fade_color[3] == 0) and (mod.fade_color[4] == 0))	
+end
+
+local function _set_red_color_fade(factor, widget)
+	if _color_fade_fully_red() then
+		return
+	end
+
+	mod.fade_color[2] = mod.fade_color[2] + 1 * factor
+	if mod.fade_color[2] > 255 then
+		mod.fade_color[2] = 255
+	end
+	mod.fade_color[3] = mod.fade_color[3] - 1 * factor
+	if mod.fade_color[3] < 0 then
+		mod.fade_color[3] = 0
+	end
+	mod.fade_color[4] = mod.fade_color[4] - 1 * factor
+	if mod.fade_color[4] < 0 then
+		mod.fade_color[4] = 0
+	end
+
+	widget.style.text.text_color = table.clone(mod.fade_color)
+end
+
+local function _reset_red_color_fade(widget)
+	mod.fade_color = table.clone(mod.default_color)
+	widget.style.text.text_color = table.clone(mod.default_color)
+end
+
+local function _scale_by_cringe_factor(input_value)
+	return((input_value/100)*mod.cringe_factor)	
 end
 
 HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings, input_service)
@@ -193,6 +229,9 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self.animating = true
 		self.anim_pos_y_offset = 0
 		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
+		if mod.anim_kill_combo > 21 and mod.show_cringe then
+			_set_red_color_fade(_scale_by_cringe_factor(2.9), self._widgets_by_name.animatedCounter)
+		end	
 	end
 
 	if self.animating then
@@ -204,12 +243,19 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		local alpha = 1 - anim_progress
 
 		local anim_font_scale = math.min(1, anim_progress * 350)
-		local font_scale = math.max(anim_font_scale, mod.anim_kill_combo)
-
+		local font_scale = 1
+		if mod.show_cringe then
+			font_scale = _scale_by_cringe_factor(math.max(anim_font_scale, mod.anim_kill_combo))
+		end
 		self._widgets_by_name.animatedCounter.style.text.font_size = (32 * anim_font_scale) + math.ceil(font_scale - 0.5)
 
 		self._widgets_by_name.animatedCounter.alpha_multiplier = alpha
 		self._widgets_by_name.animatedCounter.style.text.offset[2] = -self.anim_pos_y_offset
+
+		if _color_fade_fully_red() and mod.show_cringe then
+			self._widgets_by_name.animatedCounter.style.text.text_color[3] = (self._widgets_by_name.animatedCounter.style.text.text_color[3] + 20) % 255
+			self._widgets_by_name.animatedCounter.style.text.text_color[4] = (self._widgets_by_name.animatedCounter.style.text.text_color[4] + 20) % 255
+		end
 
 		if self.anim_pos_y_offset > 50 then
 			self.anim_pos_y_offset = 0
@@ -220,6 +266,9 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 				mod.highest_kill_combo = mod.anim_kill_combo
 			end
 			mod.anim_kill_combo = 0
+			if mod.show_cringe then
+				_reset_red_color_fade(self._widgets_by_name.animatedCounter)				
+			end
 		end
 	end
 
@@ -235,7 +284,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 	end
 	if mod.highest_kill_combo > 0 and mod.show_kill_combos then
 		self._widgets_by_name.killCombo.content.text = tostring(mod.highest_kill_combo or "Shit")
-		self._widgets_by_name.killComboLabel.content.text = tostring(mod.kill_combo_label )
+		self._widgets_by_name.killComboLabel.content.text = tostring(mod.kill_combo_label)
 	else
 		self._widgets_by_name.killCombo.content.text = tostring("")
 		self._widgets_by_name.killComboLabel.content.text = tostring("")

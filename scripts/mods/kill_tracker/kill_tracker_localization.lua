@@ -57,9 +57,25 @@ return {
 	},
 	show_cringe ={
 		en = "Show Cringe",
+		de = "Zeige Cringe",
+		es = "mostrar Cringe",
+		fr = "montrer de la Cringe",
+		ru = "показывать Cringe",
+		["zh-cn"] = "显示畏缩",
 	},
 	show_cringe_description ={
 		en = "DiamondsAreForeverLOLcheeseBURGAH",
+	},
+	cringe_factor ={
+		en = "Cringe Factor",
+		de = "Cringefaktor",
+		es = "Factor de Cringe",
+		fr = "Facteur de Cringe",
+		ru = "фактор Cringe",
+		["zh-cn"] = "畏缩因素",
+	},
+	cringe_factor_description ={
+		en = "Ja, nur bis 1000, Robert.",
 	},
 }
 

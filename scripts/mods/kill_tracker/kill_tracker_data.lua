@@ -4,7 +4,7 @@ return {
 	name = mod:localize("mod_title"),
 	description = mod:localize("mod_description"),
 	is_togglable = true,
-	allow_rehooking = true, -- The nameplate require hook needs this
+	allow_rehooking = true,
 	options = {
 		widgets = {
 			{
@@ -20,6 +20,12 @@ return {
 						setting_id = "show_cringe",
 						type = "checkbox",
 						default_value = true,
+					},
+					{
+					  setting_id      = "cringe_factor",
+					  type            = "numeric",
+					  default_value   = 100,
+					  range           = {50, 1000},
 					},
 				},
 			}

@@ -22,6 +22,15 @@ mod.anim_kill_combo = 0 --kills happening while animating
 mod.highest_kill_combo = 0
 mod.kill_counter_label = mod:localize("kill_count_hud")
 mod.kill_combo_label = mod:localize("kill_combo_hud")
+mod.default_color = Color.terminal_text_header(255, true)
+mod.fade_color = Color.terminal_text_header(255, true)
+--[[
+	terminal_text_header
+	a: 255
+	r: 216
+	g: 229
+	b: 207
+]]
 
 for _, hud_element in ipairs(hud_elements) do
 	mod:add_require_path(hud_element.filename)
@@ -48,7 +57,8 @@ end)
 -- Taken from Fracticality
 local function recreate_hud()
 	mod.show_kill_combos = mod:get("show_kill_combos")
-	mod.show_killstreak_text = mod:get("show_cringe")
+	mod.show_cringe = mod:get("show_cringe")
+	mod.cringe_factor = mod:get("cringe_factor")
 
 	local ui_manager = Managers.ui
 	if ui_manager then
