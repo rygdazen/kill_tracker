@@ -43,6 +43,14 @@ local scenegraph_definition = {
 		size = size,
 		position = { 75, -20, 10 },
 	},
+	newComboContainer = {
+		parent = "screen",
+		scale = "fit",
+		vertical_alignment = "bottom",
+		horizontal_alignment = "center",
+		size = size,
+		position = { 65, -20, 10 },
+	},
 	comboLabelContainer = {
 		parent = "screen",
 		scale = "fit",
@@ -95,7 +103,7 @@ local styleAnimated = {
 	offset = { 0, 10, 10 },
 }
 
-local comboCounter = {
+local styleComboCounter = {
 	line_spacing = 1.2,
 	font_size = font_size,
 	drop_shadow = true,
@@ -106,7 +114,18 @@ local comboCounter = {
 	text_vertical_alignment = "center",
 }
 
-local comboCounterLabel = {
+local styleNewComboCounter = {
+	line_spacing = 1.2,
+	font_size = font_size,
+	drop_shadow = true,
+	font_type = "machine_medium",
+	text_color = mod.new_combo_color,
+	size = size,
+	text_horizontal_alignment = "center",
+	text_vertical_alignment = "center",
+}
+
+local styleComboCounterLabel = {
 	line_spacing = 1.2,
 	font_size = font_size/2,
 	drop_shadow = true,
@@ -161,16 +180,25 @@ local widget_definitions = {
 			value_id = "text",
 			style_id = "text",
 			pass_type = "text",
-			style = comboCounter,
+			style = styleComboCounter,
 		} },
 		"comboContainer"
+	),
+	newKillCombo = UIWidget.create_definition(
+		{ {
+			value_id = "text",
+			style_id = "text",
+			pass_type = "text",
+			style = styleNewComboCounter,
+		} },
+		"newComboContainer"
 	),
 	killComboLabel = UIWidget.create_definition(
 		{ {
 			value_id = "text",
 			style_id = "text",
 			pass_type = "text",
-			style = comboCounterLabel,
+			style = styleComboCounterLabel,
 		} },
 		"comboLabelContainer"
 	),
@@ -235,6 +263,7 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 	self.anim_kill_combo = 0
 	self.kill_counter = 0
 	self.highest_kill_combo = 0
+	self.new_highest_kill_combo = false
 
 	mod.add_to_killcounter = function()
 		self:add_to_killcounter()
@@ -273,6 +302,7 @@ HudElementKillCount._update_combo_timer = function(self, dt)
 		self.animating = false
 		if self.highest_kill_combo < self.anim_kill_combo then
 			self.highest_kill_combo = self.anim_kill_combo
+			self.new_highest_kill_combo = true
 		end
 		self.anim_kill_combo = 0
 		if mod.show_cringe then
@@ -291,7 +321,7 @@ end
 
 HudElementKillCount._calc_anim_offset = function(self)
 	local t = self.combo_timer_percentage
-	local multiplier = math.pow(2, self.combo_timer_percentage * 2.4 + 4)
+	local multiplier = math.pow(2, self.combo_timer_percentage * 5 + 2)
 
 	return t * multiplier
 end
@@ -305,6 +335,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self._widgets_by_name.killCombo.content.text = tostring("")
 		self._widgets_by_name.killComboLabel.content.text = tostring("")
 		self._widgets_by_name.animatedCounter.content.text = tostring("")
+		self._widgets_by_name.newKillCombo.content.text = tostring("")
 
 		self._widgets_by_name.testWidget.content.text = tostring("")
 		return
@@ -315,7 +346,6 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self:_update_combo_timer(dt)
 		
 		local anim_pos_y_offset = self:_calc_anim_offset()
-		local prev_alpha = self._widgets_by_name.animatedCounter.alpha_multiplier or 1
 		local alpha = 1
 
 		if self.combo_timer_percentage > 0.6 then
@@ -324,7 +354,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 			alpha = 1 - t
 		end
 
-		local anim_font_scale = math.min(1, anim_pos_y_offset * 2)
+		local anim_font_scale = math.min(1, anim_pos_y_offset * 6.6)
 		local font_scale = 1
 		if mod.show_cringe then
 			font_scale = _scale_by_cringe_factor(math.max(anim_font_scale, self.anim_kill_combo))
@@ -351,13 +381,23 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self._widgets_by_name.animatedCounter.content.text = tostring("")
 	end
 
-	-- local kill_combo = math.max(self.highest_kill_combo, self.anim_kill_combo)
+	-- HUD Best Combo
 	if self.highest_kill_combo > 0 and mod.show_kill_combos then
 		self._widgets_by_name.killCombo.content.text = tostring(self.highest_kill_combo or "Shit")
 		self._widgets_by_name.killComboLabel.content.text = tostring(mod.kill_combo_label)
 	else
 		self._widgets_by_name.killCombo.content.text = tostring("")
 		self._widgets_by_name.killComboLabel.content.text = tostring("")
+	end
+	if self.new_highest_kill_combo and mod.show_kill_combos and (self._widgets_by_name.newKillCombo.style.text.offset[2] > -80) then
+		local comboAlpha = (self._widgets_by_name.newKillCombo.style.text.offset[2] * -1) / 80
+		self._widgets_by_name.newKillCombo.alpha_multiplier = 1 - comboAlpha
+		self._widgets_by_name.newKillCombo.style.text.offset[2] = self._widgets_by_name.newKillCombo.style.text.offset[2] - comboAlpha * 2 - 0.2
+		self._widgets_by_name.newKillCombo.content.text = tostring("+" .. tostring(self.highest_kill_combo))
+	else
+		self.new_highest_kill_combo = false
+		self._widgets_by_name.newKillCombo.style.text.offset[2] = 0
+		self._widgets_by_name.newKillCombo.content.text = tostring("")
 	end
 end
 

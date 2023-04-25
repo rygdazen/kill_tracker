@@ -33,8 +33,10 @@ mod.kill_counter = 0
 mod.highest_kill_combo = 0
 mod.kill_counter_label = mod:localize("kill_count_hud")
 mod.kill_combo_label = mod:localize("kill_combo_hud")
+--From 'color_definitions' (Darktide Source Code)
 mod.default_color = Color.terminal_text_header(255, true)
 mod.fade_color = Color.terminal_text_header(255, true)
+mod.new_combo_color = Color.dark_turquoise(255, true)
 
 for _, hud_element in ipairs(hud_elements) do
 	mod:add_require_path(hud_element.filename)

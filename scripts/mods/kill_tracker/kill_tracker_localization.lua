@@ -48,12 +48,12 @@ return {
 		["zh-cn"] = "殺人",
 	},
 	kill_combo_hud ={
-		en = "Highest Combo",
-		de = "Höchste Kombo",
-		es = "Combo Más Alto",
-		fr = "Combo le Plus Élevé",
-		ru = "Наивысшая комбинация",
-		["zh-cn"] = "最高的组合",
+		en = "Best Combo",
+		de = "Beste Kombo",
+		es = "Mejor Combo",
+		fr = "Meilleur combo",
+		ru = "Лучшая комбинация",
+		["zh-cn"] = "最佳组合",
 	},
 	show_cringe ={
 		en = "Show Cringe",
