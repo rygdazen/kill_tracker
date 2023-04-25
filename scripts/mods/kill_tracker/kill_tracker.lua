@@ -18,7 +18,7 @@ local hud_elements = {
 			"communication_wheel",
 		},
 	},
-	{
+	--[[{
 		filename = "kill_tracker/scripts/mods/kill_tracker/HudElementKillstreak",
 		class_name = "HudElementKillstreak",
 		visibility_groups = {
@@ -26,7 +26,7 @@ local hud_elements = {
 			"alive",
 			"communication_wheel",
 		},
-	},
+	},]]
 }
 
 mod.kill_counter = 0
@@ -65,7 +65,7 @@ local function recreate_hud()
 	mod.show_kill_combos = mod:get("show_kill_combos")
 	mod.show_cringe = mod:get("show_cringe")
 	mod.cringe_factor = mod:get("cringe_factor")
-	mod.show_killstreaks = mod:get("show_killstreaks")
+	mod.show_killstreaks = false --mod:get("show_killstreaks")
 
 	local ui_manager = Managers.ui
 	if ui_manager then
@@ -95,11 +95,11 @@ end
 mod.on_setting_changed = function()
 	recreate_hud()
 end
-
+--[[
 mod.add_to_killstreak_counter = function()
 	mod:notify("wtf how did u get here")
 end
-
+]]
 mod.add_to_killcounter = function()
 	mod:notify("wtf how did u get here")
 end
@@ -123,7 +123,7 @@ function(self, damage_profile, attacked_unit, attacking_unit, attack_direction, 
 		if target_is_minion then
 			if attack_result == "died" then
 				mod.add_to_killcounter()
-				mod.add_to_killstreak_counter()
+				--mod.add_to_killstreak_counter()
 			end
 		end
 	end
