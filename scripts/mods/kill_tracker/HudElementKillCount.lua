@@ -261,8 +261,8 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 	self.combo_timer_percentage = 0
 	self.combo_duration_seconds = 2.5
 	self.anim_kill_combo = 0
-	self.kill_counter = 0
-	self.highest_kill_combo = 0
+	--self.kill_counter = 0
+	--self.highest_kill_combo = 0
 	self.new_highest_kill_combo = false
 
 	mod.add_to_killcounter = function()
@@ -272,7 +272,7 @@ end
 
 HudElementKillCount.add_to_killcounter = function(self)
 	self.anim_kill_combo = self.anim_kill_combo + 1
-	self.kill_counter = self.kill_counter + 1
+	mod.kill_counter = mod.kill_counter + 1
 
 	self:_start_combo_timer()
 end
@@ -300,8 +300,8 @@ HudElementKillCount._update_combo_timer = function(self, dt)
 		self._widgets_by_name.animatedCounter.style.text.offset[2] = 0
 		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
 		self.animating = false
-		if self.highest_kill_combo < self.anim_kill_combo then
-			self.highest_kill_combo = self.anim_kill_combo
+		if mod.highest_kill_combo < self.anim_kill_combo then
+			mod.highest_kill_combo = self.anim_kill_combo
 			self.new_highest_kill_combo = true
 		end
 		self.anim_kill_combo = 0
@@ -371,7 +371,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 	end
 
 	-- HUD Kill Counter
-	self._widgets_by_name.killCounter.content.text = tostring(self.kill_counter or "Fuck")
+	self._widgets_by_name.killCounter.content.text = tostring(mod.kill_counter or "Fuck")
 	self._widgets_by_name.killCounterLabel.content.text = tostring(mod.kill_counter_label)
 
 	-- HUD Kill Combos
@@ -382,8 +382,8 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 	end
 
 	-- HUD Best Combo
-	if self.highest_kill_combo > 0 and mod.show_kill_combos then
-		self._widgets_by_name.killCombo.content.text = tostring(self.highest_kill_combo or "Shit")
+	if mod.highest_kill_combo > 0 and mod.show_kill_combos then
+		self._widgets_by_name.killCombo.content.text = tostring(mod.highest_kill_combo or "Shit")
 		self._widgets_by_name.killComboLabel.content.text = tostring(mod.kill_combo_label)
 	else
 		self._widgets_by_name.killCombo.content.text = tostring("")
@@ -393,7 +393,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		local comboAlpha = (self._widgets_by_name.newKillCombo.style.text.offset[2] * -1) / 80
 		self._widgets_by_name.newKillCombo.alpha_multiplier = 1 - comboAlpha
 		self._widgets_by_name.newKillCombo.style.text.offset[2] = self._widgets_by_name.newKillCombo.style.text.offset[2] - comboAlpha * 2 - 0.2
-		self._widgets_by_name.newKillCombo.content.text = tostring("+" .. tostring(self.highest_kill_combo))
+		self._widgets_by_name.newKillCombo.content.text = tostring("+" .. tostring(mod.highest_kill_combo))
 	else
 		self.new_highest_kill_combo = false
 		self._widgets_by_name.newKillCombo.style.text.offset[2] = 0

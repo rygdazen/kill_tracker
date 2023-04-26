@@ -1,6 +1,7 @@
 -- TODO: combo still running after settings changed
 -- TODO: for the emprah, kill streak texts
 -- TODO: cringe factor needs to add shaking and pulsating texts
+-- TODO: add setting for reset kills on death
 
 local mod = get_mod("kill_tracker")
 
@@ -62,6 +63,8 @@ end)
 
 -- Taken from Fracticality
 local function recreate_hud()
+	mod.kill_counter = 0
+	mod.highest_kill_combo = 0
 	mod.show_kill_combos = mod:get("show_kill_combos")
 	mod.show_cringe = mod:get("show_cringe")
 	mod.cringe_factor = mod:get("cringe_factor")
