@@ -18,7 +18,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -125, -20, 10 },
+		position = { -125, -8, 10 },
 	},
 	counterLabelContainer = {
 		parent = "screen",
@@ -26,7 +26,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -75, -20, 10 },
+		position = { -75, -8, 10 },
 	},
 	animContainer = {
 		parent = "screen",
@@ -41,7 +41,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 75, -20, 10 },
+		position = { 75, -8, 10 },
 	},
 	newComboContainer = {
 		parent = "screen",
@@ -49,7 +49,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 65, -20, 10 },
+		position = { 65, -8, 10 },
 	},
 	comboLabelContainer = {
 		parent = "screen",
@@ -57,7 +57,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 125, -20, 10 },
+		position = { 125, -8, 10 },
 	},
 	testContainer = {
 		parent = "screen",
@@ -375,7 +375,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 	self._widgets_by_name.killCounterLabel.content.text = tostring(mod.kill_counter_label)
 
 	-- HUD Kill Combos
-	if self.anim_kill_combo > 0 and mod.show_kill_combos and self.timer_running then
+	if self.anim_kill_combo >= mod.min_kill_combo and mod.show_kill_combos and self.timer_running then
 		self._widgets_by_name.animatedCounter.content.text = "+" .. tostring(self.anim_kill_combo)
 	else
 		self._widgets_by_name.animatedCounter.content.text = tostring("")

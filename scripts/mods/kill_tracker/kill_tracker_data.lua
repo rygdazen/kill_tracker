@@ -27,6 +27,12 @@ return {
 					  default_value   = 100,
 					  range           = {50, 1000},
 					},
+					{
+					  setting_id      = "min_kill_combo",
+					  type            = "numeric",
+					  default_value   = 0,
+					  range           = {0, 100},
+					},
 					--{
 						--setting_id = "show_killstreaks",
 						--type = "checkbox",

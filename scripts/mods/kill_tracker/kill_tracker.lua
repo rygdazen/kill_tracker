@@ -1,3 +1,5 @@
+-- version 0.4.0
+
 -- TODO: combo still running after settings changed
 -- TODO: for the emprah, kill streak texts
 -- TODO: cringe factor needs to add shaking and pulsating texts
@@ -66,6 +68,7 @@ local function recreate_hud()
 	mod.kill_counter = 0
 	mod.highest_kill_combo = 0
 	mod.show_kill_combos = mod:get("show_kill_combos")
+	mod.min_kill_combo = mod:get("min_kill_combo")
 	mod.show_cringe = mod:get("show_cringe")
 	mod.cringe_factor = mod:get("cringe_factor")
 	mod.show_killstreaks = false --mod:get("show_killstreaks")
