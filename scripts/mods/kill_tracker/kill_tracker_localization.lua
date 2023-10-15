@@ -5,7 +5,7 @@ return {
 		es = "Rastreador de Muertes",
 		fr = "Traqueur de Meurtres",
 		ru = "Счётчик убийств",
-		["zh-cn"] = "杀戮追踪器",
+		["zh-cn"] = "击杀追踪器",
 	},
 	mod_description = {
 		en = "Tracks all mission kills and kill combos on your HUD and diverts your attention away from the objective",
@@ -13,15 +13,15 @@ return {
 		es = "Rastrea todas las muertes y combos de muertes de la misión en tu HUD y desvía tu atención del objetivo",
 		fr = "Suivi de tous les meurtres et combos de meurtres de la mission sur votre HUD et détournement de votre attention de l'objectif",
 		ru = "Kill Tracker - Показывает на экране счётчик всех врагов, убитых вами в течение миссии, а также счётчик серий убийств, отвлекая ваше внимание от цели.",
-		["zh-cn"] = "在你的HUD上跟踪所有的任务杀戮和杀戮组合，并将你的注意力从目标上转移开。",
-	},	
+		["zh-cn"] = "在你的 HUD 上追踪任务内所有的击杀和连杀，使你的注意力从任务目标上移开",
+	},
 	kill_combo_options = {
 		en = "Kill Combos",
 		de = "Kill-Combos",
 		es = "Combos Asesinos",
 		fr = "Combinaisons Mortelles",
 		ru = "Серии убийств",
-		["zh-cn"] = "杀人组合",
+		["zh-cn"] = "连杀",
 	},
 	show_kill_combos ={
 		en = "Show Animated Kill Combo",
@@ -29,7 +29,7 @@ return {
 		es = "Mostrar Combo de Muerte Animada",
 		fr = "Afficher le Combo Animé de Mise à Mort",
 		ru = "Показывать всплывающие цифры",
-		["zh-cn"] = "显示动画的杀戮组合",
+		["zh-cn"] = "显示连杀动画",
 	},
 	show_kill_combos_description ={
 		en = "Display a kill combo animation above the crosshair.",
@@ -37,23 +37,23 @@ return {
 		es = "Muestra una animación de combo mortal sobre la retícula.",
 		fr = "Affiche une animation de combo de mise à mort au-dessus de la croix directionnelle.",
 		ru = "Показывает над прицелом анимации всплывающих цифр при сериях убийств.",
-		["zh-cn"] = "在十字准线上方显示一个杀戮组合动画。",
+		["zh-cn"] = "在准星上方显示一个连杀动画。",
 	},
 	min_kill_combo ={
 		en = "Minimum Kill Combo",
 		de = "Minimum Kill-Combo",
 		es = "Combo de muerte mínima",
 		fr = "Combo de mise à mort minimale",
+		["zh-cn"] = "最低连杀",
 		ru = "Минимум убийств для серии",
-		["zh-cn"] = "显示动画的杀戮组合",
 	},
 	min_kill_combo_description ={
 		en = "Show kill combo on reaching a specific number of kills.",
 		de = "Kill-Combo bei Erreichen einer bestimmten Anzahl von Kills anzeigen.",
 		es = "Mostrar combo de muertes al alcanzar un número determinado de muertes.",
 		fr = "Afficher le combo de kill lorsqu'un nombre spécifique de kills est atteint.",
+		["zh-cn"] = "达到指定击杀数后才显示连杀。",
 		ru = "Показывает счётчик серии при достижении определённого количества убийств.",
-		["zh-cn"] = "达到特定击杀数时显示连击数",
 	},
 	kill_count_hud ={
 		en = "Kills",
@@ -61,7 +61,7 @@ return {
 		es = "Mata",
 		fr = "Tue",
 		ru = "Убийства",
-		["zh-cn"] = "殺人",
+		["zh-cn"] = "击杀",
 	},
 	kill_combo_hud ={
 		en = "Best Combo",
@@ -69,7 +69,7 @@ return {
 		es = "Mejor Combo",
 		fr = "Meilleur combo",
 		ru = "Лучшая серия",
-		["zh-cn"] = "最佳组合",
+		["zh-cn"] = "最佳\n连杀",
 	},
 	show_cringe ={
 		en = "Extra Kill Combo Animations",
@@ -77,7 +77,7 @@ return {
 		es = "Animaciones extra de Kill Combo",
 		fr = "Animations supplémentaires de combo de mise à mort",
 		ru = "Дополнительные анимации",
-		["zh-cn"] = "额外的杀戮组合动画",
+		["zh-cn"] = "额外的连杀动画",
 	},
 	cringe_factor ={
 		en = "Animation Intensity",
@@ -93,8 +93,7 @@ return {
 		es = "Aumenta la intensidad en porcentaje. 100 % es el valor por defecto.",
 		fr = "Augmente l'intensité en pourcentage. 100 % est la valeur par défaut.",
 		ru = "Увеличивает интенсивность в процентах. По умолчанию используется значение 100 %.",
-		["zh-cn"] = "增加强度的百分比。100％是默认值。",
-		
+		["zh-cn"] = "增加强度的百分比。默认值为 100%。",
 	},
 	show_killstreaks ={
 		en = "Show Killstreaks",
@@ -102,7 +101,7 @@ return {
 		es = "Mostrar Killstreaks",
 		fr = "Voir Killstreaks",
 		ru = "Показывать серии убийств",
-		["zh-cn"] = "显示畏缩",
+		["zh-cn"] = "显示连杀里程碑",
 	},
 	show_killstreaks_description ={
 		en = "Boomer-Shooter Throwback Mode",
@@ -110,6 +109,6 @@ return {
 		es = "Modo Boomer-Shooter Throwback",
 		fr = "Mode Boomer-Shooter Throwback",
 		ru = "Режим старого шутера",
-		["zh-cn"] = "布尔姆-射手的抛物线模式",
+		["zh-cn"] = "复古射击游戏模式",
 	},
 }
