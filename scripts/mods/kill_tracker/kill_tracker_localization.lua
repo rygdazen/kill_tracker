@@ -44,7 +44,7 @@ return {
 		de = "Minimum Kill-Combo",
 		es = "Combo de muerte mínima",
 		fr = "Combo de mise à mort minimale",
-		ru = "Минимальное количество убийств",
+		ru = "Минимум убийств для серии",
 		["zh-cn"] = "显示动画的杀戮组合",
 	},
 	min_kill_combo_description ={
@@ -52,7 +52,7 @@ return {
 		de = "Kill-Combo bei Erreichen einer bestimmten Anzahl von Kills anzeigen.",
 		es = "Mostrar combo de muertes al alcanzar un número determinado de muertes.",
 		fr = "Afficher le combo de kill lorsqu'un nombre spécifique de kills est atteint.",
-		ru = "Показывать комбо при достижении определенного количества убийств.",
+		ru = "Показывает счётчик серии при достижении определённого количества убийств.",
 		["zh-cn"] = "达到特定击杀数时显示连击数",
 	},
 	kill_count_hud ={
