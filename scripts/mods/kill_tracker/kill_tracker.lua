@@ -1,4 +1,4 @@
--- version 0.4.1
+-- version 0.4.2
 
 -- TODO: combo still running after settings changed
 -- TODO: for the emprah, kill streak texts
