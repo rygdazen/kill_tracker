@@ -111,4 +111,10 @@ return {
 		ru = "Режим старого шутера",
 		["zh-cn"] = "复古射击游戏模式",
 	},
+	anim_container_x_offset ={
+		en = "X Offset",
+	},
+	anim_container_y_offset ={
+		en = "Y Offset",
+	},		
 }

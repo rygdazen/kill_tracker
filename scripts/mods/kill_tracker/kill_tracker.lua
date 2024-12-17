@@ -1,4 +1,4 @@
--- version 0.4.2
+-- version 0.5.0
 
 -- TODO: combo still running after settings changed
 -- TODO: for the emprah, kill streak texts
@@ -71,6 +71,8 @@ local function recreate_hud()
 	mod.min_kill_combo = mod:get("min_kill_combo")
 	mod.show_cringe = mod:get("show_cringe")
 	mod.cringe_factor = mod:get("cringe_factor")
+	mod.anim_x_offset = mod:get("anim_container_x_offset")
+	mod.anim_y_offset = mod:get("anim_container_y_offset")
 	mod.show_killstreaks = false --mod:get("show_killstreaks")
 
 	local ui_manager = Managers.ui
@@ -120,19 +122,22 @@ end
 mod:hook_safe(CLASS.AttackReportManager, "add_attack_result",
 function(self, damage_profile, attacked_unit, attacking_unit, attack_direction, hit_world_position, hit_weakspot, damage,
 	attack_result, attack_type, damage_efficiency, ...)
+	if not (attack_result == 'died') then
+		return
+	end
 
 	local player = mod:player_from_unit(attacking_unit)
-	if player then
-		local unit_data_extension = ScriptUnit.has_extension(attacked_unit, "unit_data_system")
-		local breed_or_nil = unit_data_extension and unit_data_extension:breed()
-		local target_is_minion = breed_or_nil and Breed.is_minion(breed_or_nil)		
-		if target_is_minion then
-			if attack_result == "died" then
-				mod.add_to_killcounter()
-				--mod.add_to_killstreak_counter()
-			end
-		end
+	if not player then
+		return
 	end
+
+	local unit_data_extension = ScriptUnit.has_extension(attacked_unit, "unit_data_system")
+	local breed_or_nil = unit_data_extension and unit_data_extension:breed()
+	local target_is_minion = breed_or_nil and Breed.is_minion(breed_or_nil)		
+	if target_is_minion then
+		mod.add_to_killcounter()
+		--mod.add_to_killstreak_counter()
+	end	
 end)
 
 -- Player from player_unit

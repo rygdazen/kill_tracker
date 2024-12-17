@@ -33,7 +33,7 @@ local scenegraph_definition = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		size = sizeAnim,
-		position = { 0, -220, 10 },
+		position = { mod.anim_x_offset , mod.anim_y_offset, 10 },
 	},
 	comboContainer = {
 		parent = "screen",
