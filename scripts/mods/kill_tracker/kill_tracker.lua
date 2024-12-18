@@ -2,7 +2,6 @@
 
 -- TODO: combo still running after settings changed
 -- TODO: for the emprah, kill streak texts
--- TODO: cringe factor needs to add shaking and pulsating texts
 -- TODO: add setting for reset kills on death
 
 local mod = get_mod("kill_tracker")

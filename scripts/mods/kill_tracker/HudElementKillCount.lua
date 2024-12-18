@@ -364,9 +364,20 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self._widgets_by_name.animatedCounter.alpha_multiplier = alpha
 		self._widgets_by_name.animatedCounter.style.text.offset[2] = -anim_pos_y_offset
 
-		if _color_fade_fully_red() and mod.show_cringe then
-			self._widgets_by_name.animatedCounter.style.text.text_color[3] = (self._widgets_by_name.animatedCounter.style.text.text_color[3] + 20) % 255
-			self._widgets_by_name.animatedCounter.style.text.text_color[4] = (self._widgets_by_name.animatedCounter.style.text.text_color[4] + 20) % 255
+		if mod.show_cringe then
+			if (self.anim_kill_combo > 100) or (_color_fade_fully_red()) then
+				self._widgets_by_name.animatedCounter.style.text.text_color[3] = (self._widgets_by_name.animatedCounter.style.text.text_color[3] + 20) % 255
+				self._widgets_by_name.animatedCounter.style.text.text_color[4] = (self._widgets_by_name.animatedCounter.style.text.text_color[4] + 20) % 255
+				
+				local shake_intensity = (mod.cringe_factor / 10) * 0.5
+				if math.ceil(t * 20) % 2 == 0 then
+					self._widgets_by_name.animatedCounter.style.text.offset = {
+						math.random(-shake_intensity, shake_intensity),
+						math.random(-shake_intensity, shake_intensity),
+						math.random(-shake_intensity, shake_intensity)
+					}
+				end
+			end
 		end
 	end
 
