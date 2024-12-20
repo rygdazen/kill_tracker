@@ -18,7 +18,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -125, -8, 10 },
+		position = { -125, -11, 10 },
 	},
 	counterLabelContainer = {
 		parent = "screen",
@@ -26,7 +26,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -75, -8, 10 },
+		position = { -75, -11, 10 },
 	},
 	animContainer = {
 		parent = "screen",
@@ -41,7 +41,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 75, -8, 10 },
+		position = { 75, -11, 10 },
 	},
 	newComboContainer = {
 		parent = "screen",
@@ -49,7 +49,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 67, -8, 10 },
+		position = { 67, -11, 10 },
 	},
 	comboLabelContainer = {
 		parent = "screen",
@@ -57,7 +57,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 135, -8, 10 },
+		position = { 135, -11, 10 },
 	},
 	testContainer = {
 		parent = "screen",
