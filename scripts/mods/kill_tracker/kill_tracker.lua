@@ -1,7 +1,5 @@
--- version 0.5.1
+-- version 0.6.0
 
--- TODO: combo still running after settings changed
--- TODO: for the emprah, kill streak texts
 -- TODO: add setting for reset kills on death
 
 local mod = get_mod("kill_tracker")
@@ -20,25 +18,12 @@ local hud_elements = {
 			"communication_wheel",
 		},
 	},
-	--[[{
-		filename = "kill_tracker/scripts/mods/kill_tracker/HudElementKillstreak",
-		class_name = "HudElementKillstreak",
-		visibility_groups = {
-			"tactical_overlay",
-			"alive",
-			"communication_wheel",
-		},
-	},]]
 }
 
 mod.kill_counter = 0
 mod.highest_kill_combo = 0
 mod.kill_counter_label = mod:localize("kill_count_hud")
 mod.kill_combo_label = mod:localize("kill_combo_hud")
---From 'color_definitions' (Darktide Source Code)
-mod.default_color = Color.terminal_text_header(255, true)
-mod.fade_color = Color.terminal_text_header(255, true)
-mod.new_combo_color = Color.dark_turquoise(255, true)
 
 for _, hud_element in ipairs(hud_elements) do
 	mod:add_require_path(hud_element.filename)
@@ -63,16 +48,26 @@ mod:hook("UIHud", "init", function(func, self, elements, visibility_groups, para
 end)
 
 -- Taken from Fracticality
-local function recreate_hud()
-	mod.kill_counter = 0
-	mod.highest_kill_combo = 0
+local function recreate_hud(reset_stats)
+	if reset_stats then
+		mod.kill_counter = 0
+		mod.highest_kill_combo = 0
+	end;
 	mod.show_kill_combos = mod:get("show_kill_combos")
 	mod.min_kill_combo = mod:get("min_kill_combo")
 	mod.show_cringe = mod:get("show_cringe")
 	mod.cringe_factor = mod:get("cringe_factor")
 	mod.anim_x_offset = mod:get("anim_container_x_offset")
 	mod.anim_y_offset = mod:get("anim_container_y_offset")
-	mod.show_killstreaks = false --mod:get("show_killstreaks")
+
+	--From 'color_definitions' (Darktide Source Code)
+	local color_code = mod:get("anim_color")
+	local transparency = mod:get("anim_transparency")
+	
+	mod.default_color = Color.terminal_text_header(255, true)
+	mod.anim_color = Color[color_code](transparency,true)
+	mod.fade_color = Color[color_code](transparency,true)
+	mod.new_combo_color = Color.dark_turquoise(255, true)
 
 	local ui_manager = Managers.ui
 	if ui_manager then
@@ -92,21 +87,17 @@ local function recreate_hud()
 end
 
 mod.reload_mods = function()
-	recreate_hud()
+	recreate_hud(true)
 end
 
 mod.on_all_mods_loaded = function()
-	recreate_hud()
+	recreate_hud(true)
 end
 
 mod.on_setting_changed = function()
-	recreate_hud()
+	recreate_hud(false)
 end
---[[
-mod.add_to_killstreak_counter = function()
-	mod:notify("wtf how did u get here")
-end
-]]
+
 mod.add_to_killcounter = function()
 	mod:notify("wtf how did u get here")
 end
@@ -114,7 +105,7 @@ end
 function mod.on_game_state_changed(status, state_name)
 	-- Clear row values on game state enter
 	if state_name == 'GameplayStateRun' or state_name == "StateGameplay" and status == "enter" then
-		recreate_hud()
+		recreate_hud(true)
 	end
 end
 
@@ -135,7 +126,6 @@ function(self, damage_profile, attacked_unit, attacking_unit, attack_direction, 
 	local target_is_minion = breed_or_nil and Breed.is_minion(breed_or_nil)		
 	if target_is_minion then
 		mod.add_to_killcounter()
-		--mod.add_to_killstreak_counter()
 	end	
 end)
 

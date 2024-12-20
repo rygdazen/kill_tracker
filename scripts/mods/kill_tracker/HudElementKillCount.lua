@@ -6,7 +6,7 @@ local UIHudSettings = require("scripts/settings/ui/ui_hud_settings")
 local UIWidget = require("scripts/managers/ui/ui_widget")
 local UIFonts = mod:original_require("scripts/managers/ui/ui_fonts")
 
-local font_size = 32
+local font_size = 24
 local font_size_anim = 140
 local size = { 60, font_size }
 local sizeAnim = { 1000, font_size_anim }
@@ -49,7 +49,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 65, -8, 10 },
+		position = { 67, -8, 10 },
 	},
 	comboLabelContainer = {
 		parent = "screen",
@@ -57,7 +57,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 125, -8, 10 },
+		position = { 135, -8, 10 },
 	},
 	testContainer = {
 		parent = "screen",
@@ -96,7 +96,7 @@ local styleAnimated = {
 	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
-	text_color = mod.default_color,
+	text_color = mod.anim_color,
 	size = sizeAnim,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "bottom",
@@ -220,34 +220,70 @@ local function _color_fade_fully_red()
 	return((mod.fade_color[2] == 255) and (mod.fade_color[3] == 0) and (mod.fade_color[4] == 0))	
 end
 
-local function _set_red_color_fade(factor, widget)
+local function _get_new_color_value(curr_val, factor, increase)
+	if increase then
+		if curr_val >= 255 then
+			return 255
+		end
+	else
+		if curr_val <= 0 then
+			return 0
+		end
+	end
+
+	local new_val
+
+	local curr_perc = curr_val / 255
+	if curr_perc < 40 then
+		new_val = 1
+	end
+	if curr_perc < 60 then
+		new_val = 1
+	end
+	if curr_perc < 80 then
+		new_val = 1
+	end
+
+	if increase then
+		return math.min(255, curr_val + new_val * factor)
+	else
+		return math.max(0, curr_val - new_val * factor)
+	end
+end
+
+local function _get_new_increased_color_value(curr_val)	
+	if curr_val >= 255 then
+		return 255
+	end
+	return math.min(255,math.ceil(255 * ((curr_val / 255) + 0.01)))
+end
+
+local function _get_new_decreased_color_value(curr_val)	
+	if curr_val <= 0 then
+		return 0
+	end
+	return math.max(0,math.ceil(255 * ((curr_val / 255) - 0.01)))
+end
+
+local function _set_red_color_fade(widget)
 	if _color_fade_fully_red() then
 		return
 	end
 
-	mod.fade_color[2] = mod.fade_color[2] + 1 * factor
-	if mod.fade_color[2] > 255 then
-		mod.fade_color[2] = 255
-	end
-	mod.fade_color[3] = mod.fade_color[3] - 1 * factor
-	if mod.fade_color[3] < 0 then
-		mod.fade_color[3] = 0
-	end
-	mod.fade_color[4] = mod.fade_color[4] - 1 * factor
-	if mod.fade_color[4] < 0 then
-		mod.fade_color[4] = 0
-	end
+	mod.fade_color[2] = _get_new_increased_color_value(mod.fade_color[2])
+	mod.fade_color[3] = _get_new_decreased_color_value(mod.fade_color[3])
+	mod.fade_color[4] = _get_new_decreased_color_value(mod.fade_color[4])
 
 	widget.style.text.text_color = table.clone(mod.fade_color)
 end
 
 local function _reset_red_color_fade(widget)
-	mod.fade_color = table.clone(mod.default_color)
-	widget.style.text.text_color = table.clone(mod.default_color)
+	mod.fade_color = table.clone(mod.anim_color)
+	widget.style.text.text_color = table.clone(mod.anim_color)
 end
 
 local function _scale_by_cringe_factor(input_value)
-	return((input_value/100)*mod.cringe_factor)	
+	return((input_value/100)*mod.cringe_factor*0.6)	
 end
 
 HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
@@ -282,8 +318,8 @@ HudElementKillCount._start_combo_timer = function(self)
 	self.combo_timer = 0
 	 
 	self._widgets_by_name.animatedCounter.alpha_multiplier = 1
-	if self.anim_kill_combo > 21 and mod.show_cringe then
-		_set_red_color_fade(_scale_by_cringe_factor(2.9), self._widgets_by_name.animatedCounter)
+	if (self.anim_kill_combo < 100) and mod.show_cringe then
+		_set_red_color_fade(self._widgets_by_name.animatedCounter)
 	end	
 end
 
@@ -359,13 +395,13 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		if mod.show_cringe then
 			font_scale = _scale_by_cringe_factor(math.max(anim_font_scale, self.anim_kill_combo))
 		end
-		self._widgets_by_name.animatedCounter.style.text.font_size = (32 * anim_font_scale) + math.ceil(font_scale - 0.5)
+		self._widgets_by_name.animatedCounter.style.text.font_size = (24 * anim_font_scale) + math.ceil(font_scale - 0.5)
 
 		self._widgets_by_name.animatedCounter.alpha_multiplier = alpha
 		self._widgets_by_name.animatedCounter.style.text.offset[2] = -anim_pos_y_offset
 
 		if mod.show_cringe then
-			if (self.anim_kill_combo > 100) or (_color_fade_fully_red()) then
+			if (self.anim_kill_combo >= 100) then
 				self._widgets_by_name.animatedCounter.style.text.text_color[3] = (self._widgets_by_name.animatedCounter.style.text.text_color[3] + 20) % 255
 				self._widgets_by_name.animatedCounter.style.text.text_color[4] = (self._widgets_by_name.animatedCounter.style.text.text_color[4] + 20) % 255
 				

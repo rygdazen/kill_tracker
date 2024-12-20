@@ -1,4 +1,5 @@
-return {
+
+local localization = {
 	mod_title = {
 		en = "Kill Tracker",
 		de = "Kill-Tracker",
@@ -95,26 +96,46 @@ return {
 		ru = "Увеличивает интенсивность в процентах. По умолчанию используется значение 100 %.",
 		["zh-cn"] = "增加强度的百分比。默认值为 100%。",
 	},
-	show_killstreaks ={
-		en = "Show Killstreaks",
-		de = "Killstreaks anzeigen",
-		es = "Mostrar Killstreaks",
-		fr = "Voir Killstreaks",
-		ru = "Показывать серии убийств",
-		["zh-cn"] = "显示连杀里程碑",
-	},
-	show_killstreaks_description ={
-		en = "Boomer-Shooter Throwback Mode",
-		de = "Boomer-Shooter Throwback-Modus",
-		es = "Modo Boomer-Shooter Throwback",
-		fr = "Mode Boomer-Shooter Throwback",
-		ru = "Режим старого шутера",
-		["zh-cn"] = "复古射击游戏模式",
-	},
 	anim_container_x_offset ={
 		en = "X Offset",
+		de = "X-Offset",		
+		es = "X Offset",
+		fr = "X Décalage",
+		ru = "Смещение Y",
+		["zh-cn"] = "X 偏移",
 	},
 	anim_container_y_offset ={
 		en = "Y Offset",
-	},		
+		de = "Y-Offset",
+		es = "Y Offset",
+		fr = "Y Décalage",
+		ru = "Смещение Y",
+		["zh-cn"] = "Y 偏移",
+	},
+	anim_transparency ={
+		en = "Transparency",
+		de = "Transparenz",
+		fr = "Transparence",
+		es = "Transparencia",
+		ru = "Прозрачность",
+		["zh-cn"] = "透明度",
+	},
+	anim_color ={
+		en = "Colour",
+		de = "Farbe",
+		fr = "Couleur",
+		es = "Color",
+		ru = "Цвет",
+		["zh-cn"] = "颜色",
+	},
 }
+
+-- taken from "True Level"
+for i, name in ipairs(Color.list) do
+    local c = Color[name](255, true)
+    local text = string.format("{#color(%s,%s,%s)}%s{#reset()}", c[2], c[3], c[4], string.gsub(name, "_", " "))
+
+    localization[name] = { en = text }
+end
+
+return localization
