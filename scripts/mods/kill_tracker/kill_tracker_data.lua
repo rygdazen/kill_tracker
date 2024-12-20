@@ -59,7 +59,7 @@ local data = {
 						setting_id      = "cringe_factor",
 						type            = "numeric",
 						default_value   = 100,
-						range           = {50, 1000},
+						range           = {50, 500},
 					},
 					{
 						setting_id      = "min_kill_combo",

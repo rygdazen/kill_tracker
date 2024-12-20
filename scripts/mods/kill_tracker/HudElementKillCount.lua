@@ -220,37 +220,6 @@ local function _color_fade_fully_red()
 	return((mod.fade_color[2] == 255) and (mod.fade_color[3] == 0) and (mod.fade_color[4] == 0))	
 end
 
-local function _get_new_color_value(curr_val, factor, increase)
-	if increase then
-		if curr_val >= 255 then
-			return 255
-		end
-	else
-		if curr_val <= 0 then
-			return 0
-		end
-	end
-
-	local new_val
-
-	local curr_perc = curr_val / 255
-	if curr_perc < 40 then
-		new_val = 1
-	end
-	if curr_perc < 60 then
-		new_val = 1
-	end
-	if curr_perc < 80 then
-		new_val = 1
-	end
-
-	if increase then
-		return math.min(255, curr_val + new_val * factor)
-	else
-		return math.max(0, curr_val - new_val * factor)
-	end
-end
-
 local function _get_new_increased_color_value(curr_val)	
 	if curr_val >= 255 then
 		return 255
@@ -320,7 +289,7 @@ HudElementKillCount._start_combo_timer = function(self)
 	self._widgets_by_name.animatedCounter.alpha_multiplier = 1
 	if (self.anim_kill_combo < 100) and mod.show_cringe then
 		_set_red_color_fade(self._widgets_by_name.animatedCounter)
-	end	
+	end
 end
 
 HudElementKillCount._update_combo_timer = function(self, dt)
@@ -405,11 +374,11 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 				self._widgets_by_name.animatedCounter.style.text.text_color[3] = (self._widgets_by_name.animatedCounter.style.text.text_color[3] + 20) % 255
 				self._widgets_by_name.animatedCounter.style.text.text_color[4] = (self._widgets_by_name.animatedCounter.style.text.text_color[4] + 20) % 255
 				
-				local shake_intensity = (mod.cringe_factor / 10) * 0.5
+				local shake_intensity = (mod.cringe_factor / 10) * 0.6
 				if math.ceil(t * 20) % 2 == 0 then
 					self._widgets_by_name.animatedCounter.style.text.offset = {
 						math.random(-shake_intensity, shake_intensity),
-						math.random(-shake_intensity, shake_intensity),
+						math.random(-shake_intensity, shake_intensity) - anim_pos_y_offset,
 						math.random(-shake_intensity, shake_intensity)
 					}
 				end
