@@ -6,7 +6,7 @@ local UIHudSettings = require("scripts/settings/ui/ui_hud_settings")
 local UIWidget = require("scripts/managers/ui/ui_widget")
 local UIFonts = mod:original_require("scripts/managers/ui/ui_fonts")
 
-local font_size = 24
+local font_size = 26
 local font_size_anim = 140
 local size = { 60, font_size }
 local sizeAnim = { 1000, font_size_anim }
@@ -364,7 +364,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		if mod.show_cringe then
 			font_scale = _scale_by_cringe_factor(math.max(anim_font_scale, self.anim_kill_combo))
 		end
-		self._widgets_by_name.animatedCounter.style.text.font_size = (24 * anim_font_scale) + math.ceil(font_scale - 0.5)
+		self._widgets_by_name.animatedCounter.style.text.font_size = (font_size * anim_font_scale) + math.ceil(font_scale - 0.5)
 
 		self._widgets_by_name.animatedCounter.alpha_multiplier = alpha
 		self._widgets_by_name.animatedCounter.style.text.offset[2] = -anim_pos_y_offset
