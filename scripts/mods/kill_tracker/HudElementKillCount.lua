@@ -6,7 +6,8 @@ local UIHudSettings = require("scripts/settings/ui/ui_hud_settings")
 local UIWidget = require("scripts/managers/ui/ui_widget")
 local UIFonts = mod:original_require("scripts/managers/ui/ui_fonts")
 
-local font_size = 26
+local font_size = mod.label_size
+local font_offset = mod.label_y_offset
 local font_size_anim = 140
 local size = { 60, font_size }
 local sizeAnim = { 1000, font_size_anim }
@@ -18,7 +19,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -125, -11, 10 },
+		position = { -125, font_offset, 10 },
 	},
 	counterLabelContainer = {
 		parent = "screen",
@@ -26,7 +27,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -75, -11, 10 },
+		position = { -75, font_offset, 10 },
 	},
 	animContainer = {
 		parent = "screen",
@@ -41,7 +42,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 75, -11, 10 },
+		position = { 75, font_offset, 10 },
 	},
 	newComboContainer = {
 		parent = "screen",
@@ -49,7 +50,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 67, -11, 10 },
+		position = { 67, font_offset, 10 },
 	},
 	comboLabelContainer = {
 		parent = "screen",
@@ -57,7 +58,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 135, -11, 10 },
+		position = { 135, font_offset, 10 },
 	},
 	testContainer = {
 		parent = "screen",

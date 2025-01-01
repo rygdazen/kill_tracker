@@ -128,6 +128,46 @@ local localization = {
 		ru = "Цвет",
 		["zh-cn"] = "颜色",
 	},
+	label_size = {
+		en = "Label Size",
+		de = "Label-Größe",
+		es = "Tamaño de la Etiqueta",
+		fr = "Taille de l'Étiquette",
+		ru = "Размер метки",
+		["zh-cn"] = "标签大小",
+	},
+	default = {
+		en = "Default",
+		de = "Standard",
+		es = "Por Defecto",
+		fr = "Par Défaut",
+		ru = "По умолчанию",
+		["zh-cn"] = "默认",
+	},
+	large = {
+		en = "Large",
+		de = "Groß",
+		es = "Grande",
+		fr = "Grand",
+		ru = "Большой",
+		["zh-cn"] = "大",
+	},
+	largest = {
+		en = "Largest",
+		de = "Größte",
+		es = "Más Grande",
+		fr = "Le Plus Grand",
+		ru = "Самый большой",
+		["zh-cn"] = "最大",
+	},
+	small = {
+		en = "Small",
+		de = "Klein",
+		es = "Pequeño",
+		fr = "Petit",
+		ru = "Маленький",
+		["zh-cn"] = "小",
+	},
 }
 
 -- taken from "True Level"

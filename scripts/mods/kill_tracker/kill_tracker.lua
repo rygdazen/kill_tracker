@@ -1,4 +1,4 @@
--- version 0.6.2
+-- version 0.7.0
 
 -- TODO: add setting for reset kills on death
 
@@ -63,6 +63,20 @@ local function recreate_hud(reset_stats)
 	--From 'color_definitions' (Darktide Source Code)
 	local color_code = mod:get("anim_color")
 	local transparency = mod:get("anim_transparency")
+
+	if mod:get("label_size") == "label_size_default" then
+		mod.label_size = 26
+		mod.label_y_offset = -11
+	elseif mod:get("label_size") == "label_size_large" then
+		mod.label_size = 32
+		mod.label_y_offset = -8
+	elseif mod:get("label_size") == "label_size_largest" then
+		mod.label_size = 36
+		mod.label_y_offset = -6
+	elseif mod:get("label_size") == "label_size_small" then
+		mod.label_size = 22
+		mod.label_y_offset = -12
+	end
 	
 	mod.default_color = Color.terminal_text_header(255, true)
 	mod.anim_color = Color[color_code](transparency,true)

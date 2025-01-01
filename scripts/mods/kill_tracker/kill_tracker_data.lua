@@ -91,6 +91,17 @@ local data = {
 						default_value 	= "terminal_text_header",
 						options 		= table.clone(option_table.color),
 					},
+					{
+						setting_id		= "label_size",
+						type			= "dropdown",
+						default_value	= "label_size_default",
+						options			= {
+											{ text = "largest", value = "label_size_largest" },
+											{ text = "large", value = "label_size_large" },
+											{ text = "default", value = "label_size_default" },											
+											{ text = "small", value = "label_size_small" },
+										}
+					},
 				},
 			}
 		},
