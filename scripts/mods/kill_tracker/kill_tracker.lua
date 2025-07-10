@@ -8,47 +8,26 @@ mod:io_dofile("kill_tracker/scripts/mods/kill_tracker/utils")
 
 local Breed = mod:original_require("scripts/utilities/breed")
 
-local hud_elements = {
-	{
-		filename = "kill_tracker/scripts/mods/kill_tracker/HudElementKillCount",
-		class_name = "HudElementKillCount",
-		visibility_groups = {
-			"tactical_overlay",
-			"alive",
-			"communication_wheel",
-		},
-	},
-}
-
 mod.kill_counter = 0
 mod.highest_kill_combo = 0
 mod.kill_counter_label = mod:localize("kill_count_hud")
 mod.kill_combo_label = mod:localize("kill_combo_hud")
 
-for _, hud_element in ipairs(hud_elements) do
-	mod:add_require_path(hud_element.filename)
-end
-
-mod:hook("UIHud", "init", function(func, self, elements, visibility_groups, params)
-
-	for _, hud_element in ipairs(hud_elements) do
-		if not table.find_by_key(elements, "class_name", hud_element.class_name) then
-			table.insert(elements, {
-				class_name = hud_element.class_name,
-				filename = hud_element.filename,
-				use_hud_scale = true,
-				visibility_groups = hud_element.visibility_groups or {
-					"alive",
-				},
-			})
-		end
+mod:register_hud_element({
+	filename = "kill_tracker/scripts/mods/kill_tracker/HudElementKillCount",
+	class_name = "HudElementKillCount",
+	visibility_groups = {
+		"tactical_overlay",
+		"alive",
+		"communication_wheel",
+	},
+	use_hud_scale = true,
+	validation_function = function(params)
+		return Managers.state.game_mode:game_mode_name() ~= "hub"
 	end
+})
 
-	return func(self, elements, visibility_groups, params)
-end)
-
--- Taken from Fracticality
-local function recreate_hud(reset_stats)
+local function apply_settings(reset_stats)
 	if reset_stats then
 		mod.kill_counter = 0
 		mod.highest_kill_combo = 0
@@ -77,39 +56,23 @@ local function recreate_hud(reset_stats)
 		mod.label_size = 22
 		mod.label_y_offset = -12
 	end
-	
+
 	mod.default_color = Color.terminal_text_header(255, true)
 	mod.anim_color = Color[color_code](transparency,true)
 	mod.fade_color = Color[color_code](transparency,true)
 	mod.new_combo_color = Color.dark_turquoise(255, true)
-
-	local ui_manager = Managers.ui
-	if ui_manager then
-		local hud = ui_manager._hud
-		if hud then
-			local player_manager = Managers.player
-			local player = player_manager:local_player(1)
-			local peer_id = player:peer_id()
-			local local_player_id = player:local_player_id()
-			local elements = hud._element_definitions
-			local visibility_groups = hud._visibility_groups
-
-			hud:destroy()
-			ui_manager:create_player_hud(peer_id, local_player_id, elements, visibility_groups)
-		end
-	end
 end
 
 mod.reload_mods = function()
-	recreate_hud(true)
+	apply_settings(true)
 end
 
 mod.on_all_mods_loaded = function()
-	recreate_hud(true)
+	apply_settings(true)
 end
 
 mod.on_setting_changed = function()
-	recreate_hud(false)
+	apply_settings(false)
 end
 
 mod.add_to_killcounter = function()
@@ -119,7 +82,7 @@ end
 function mod.on_game_state_changed(status, state_name)
 	-- Clear row values on game state enter
 	if state_name == 'GameplayStateRun' or state_name == "StateGameplay" and status == "enter" then
-		recreate_hud(true)
+		apply_settings(true)
 	end
 end
 
