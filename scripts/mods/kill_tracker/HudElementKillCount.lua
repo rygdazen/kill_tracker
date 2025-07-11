@@ -7,7 +7,7 @@ local UIWidget = require("scripts/managers/ui/ui_widget")
 local UIFonts = mod:original_require("scripts/managers/ui/ui_fonts")
 
 local font_size_anim = 140
-local size = { 60, 0 }
+local size = { 60, 40 }
 local sizeAnim = { 1000, font_size_anim }
 local font_offset = { 0, 0, 0 }
 local scenegraph_definition = {
@@ -33,7 +33,7 @@ local scenegraph_definition = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		size = sizeAnim,
-		position = mod.anim_offset,
+		position = { 0, 0, 10 },
 	},
 	comboContainer = {
 		parent = "screen",
@@ -144,22 +144,6 @@ local styleTest = {
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
 }
-
-mod.apply_widget_settings = function()
-	local font_size = mod.label_size
-
-	size[2] = font_size
-	styleCounter.font_size = font_size
-	styleCounterLabel.font_size = font_size/2
-	styleAnimated.font_size = font_size
-	styleComboCounter.font_size = font_size
-	styleNewComboCounter.font_size = font_size
-	styleComboCounterLabel.font_size = font_size/2
-	styleTest.font_size = font_size
-
-	font_offset[2] = mod.label_y_offset
-end
-mod.apply_widget_settings()
 
 local widget_definitions = {
 	killCounter = UIWidget.create_definition(
@@ -284,15 +268,34 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 	self.new_highest_kill_combo = false
 
 	mod.add_to_killcounter = function()
-		self:add_to_killcounter()
+		self.anim_kill_combo = self.anim_kill_combo + 1
+		mod.kill_counter = mod.kill_counter + 1
+
+		self:_start_combo_timer()
 	end
-end
 
-HudElementKillCount.add_to_killcounter = function(self)
-	self.anim_kill_combo = self.anim_kill_combo + 1
-	mod.kill_counter = mod.kill_counter + 1
+	mod.apply_widget_settings = function()
+		local font_size = mod.label_size
 
-	self:_start_combo_timer()
+		size[2] = font_size
+
+		local widgets = self._widgets_by_name
+		widgets.killCounter.style.text.font_size = font_size
+		widgets.killCounterLabel.style.text.font_size = font_size/2
+		widgets.animatedCounter.style.text.font_size = font_size
+		widgets.killCombo.style.text.font_size = font_size
+		widgets.newKillCombo.style.text.font_size = font_size
+		widgets.killComboLabel.style.text.font_size = font_size/2
+		widgets.testWidget.style.text.font_size = font_size
+
+		font_offset[2] = mod.label_y_offset
+
+		local anim_offset = mod.anim_offset
+		widgets.animatedCounter.style.text.offset[1] = anim_offset[1]
+		widgets.animatedCounter.style.text.offset[2] = anim_offset[2]
+		widgets.animatedCounter.style.text.offset[3] = anim_offset[3]
+	end
+	mod.apply_widget_settings()
 end
 
 HudElementKillCount._start_combo_timer = function(self)
@@ -315,7 +318,7 @@ HudElementKillCount._update_combo_timer = function(self, dt)
 		self.combo_timer = 0
 		self.combo_timer_percentage = 0
 		
-		self._widgets_by_name.animatedCounter.style.text.offset[2] = 0
+		self._widgets_by_name.animatedCounter.style.text.offset[2] = mod.anim_offset[2]
 		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
 		self.animating = false
 		if mod.highest_kill_combo < self.anim_kill_combo then
@@ -368,7 +371,7 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self._widgets_by_name.animatedCounter.style.text.font_size = (mod.label_size * anim_font_scale) + math.ceil(font_scale - 0.5)
 
 		self._widgets_by_name.animatedCounter.alpha_multiplier = alpha
-		self._widgets_by_name.animatedCounter.style.text.offset[2] = -anim_pos_y_offset
+		self._widgets_by_name.animatedCounter.style.text.offset[2] = mod.anim_offset[2] - anim_pos_y_offset
 
 		if mod.show_cringe then
 			if (self.anim_kill_combo >= 100) then
@@ -377,10 +380,11 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 				
 				local shake_intensity = (mod.cringe_factor / 10) * 0.6
 				if math.ceil(t * 20) % 2 == 0 then
+					local base_offset = mod.anim_offset
 					self._widgets_by_name.animatedCounter.style.text.offset = {
-						math.random(-shake_intensity, shake_intensity),
-						math.random(-shake_intensity, shake_intensity) - anim_pos_y_offset,
-						math.random(-shake_intensity, shake_intensity)
+						base_offset[1] + math.random(-shake_intensity, shake_intensity),
+						base_offset[2] + math.random(-shake_intensity, shake_intensity) - anim_pos_y_offset,
+						base_offset[3] + math.random(-shake_intensity, shake_intensity)
 					}
 				end
 			end

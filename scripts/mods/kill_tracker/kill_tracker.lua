@@ -79,10 +79,6 @@ mod.on_setting_changed = function()
 	apply_settings(false)
 end
 
-mod.add_to_killcounter = function()
-	mod:notify("wtf how did u get here")
-end
-
 function mod.on_game_state_changed(status, state_name)
 	-- Clear row values on game state enter
 	if state_name == 'GameplayStateRun' or state_name == "StateGameplay" and status == "enter" then
@@ -105,7 +101,7 @@ function(self, damage_profile, attacked_unit, attacking_unit, attack_direction, 
 	local unit_data_extension = ScriptUnit.has_extension(attacked_unit, "unit_data_system")
 	local breed_or_nil = unit_data_extension and unit_data_extension:breed()
 	local target_is_minion = breed_or_nil and Breed.is_minion(breed_or_nil)		
-	if target_is_minion then
+	if target_is_minion and mod.add_to_killcounter then
 		mod.add_to_killcounter()
 	end	
 end)
