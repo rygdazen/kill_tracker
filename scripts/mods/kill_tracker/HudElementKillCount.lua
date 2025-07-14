@@ -6,11 +6,10 @@ local UIHudSettings = require("scripts/settings/ui/ui_hud_settings")
 local UIWidget = require("scripts/managers/ui/ui_widget")
 local UIFonts = mod:original_require("scripts/managers/ui/ui_fonts")
 
-local font_size = mod.label_size
-local font_offset = mod.label_y_offset
 local font_size_anim = 140
-local size = { 60, font_size }
+local size = { 60, 40 }
 local sizeAnim = { 1000, font_size_anim }
+local font_offset = { 0, 0, 0 }
 local scenegraph_definition = {
 	screen = UIWorkspaceSettings.screen,
 	counterContainer = {
@@ -19,7 +18,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -125, font_offset, 10 },
+		position = { -125, 0, 10 },
 	},
 	counterLabelContainer = {
 		parent = "screen",
@@ -27,14 +26,14 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { -75, font_offset, 10 },
+		position = { -75, 0, 10 },
 	},
 	animContainer = {
 		parent = "screen",
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		size = sizeAnim,
-		position = { mod.anim_x_offset , mod.anim_y_offset, 10 },
+		position = { 0, 0, 10 },
 	},
 	comboContainer = {
 		parent = "screen",
@@ -42,7 +41,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 75, font_offset, 10 },
+		position = { 75, 0, 10 },
 	},
 	newComboContainer = {
 		parent = "screen",
@@ -50,7 +49,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 67, font_offset, 10 },
+		position = { 67, 0, 10 },
 	},
 	comboLabelContainer = {
 		parent = "screen",
@@ -58,7 +57,7 @@ local scenegraph_definition = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		size = size,
-		position = { 135, font_offset, 10 },
+		position = { 135, 0, 10 },
 	},
 	testContainer = {
 		parent = "screen",
@@ -72,74 +71,72 @@ local scenegraph_definition = {
 
 local styleCounter = {
 	line_spacing = 1.2,
-	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
+	offset = font_offset,
 }
 
 local styleCounterLabel = {
 	line_spacing = 1.2,
-	font_size = font_size/2,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
+	offset = font_offset,
 }
 
 local styleAnimated = {
 	line_spacing = 1.2,
-	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = mod.anim_color,
 	size = sizeAnim,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "bottom",
-	offset = { 0, 10, 10 },
+	offset = { 0, 0, 0 },
 }
 
 local styleComboCounter = {
 	line_spacing = 1.2,
-	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
+	offset = font_offset,
 }
 
 local styleNewComboCounter = {
 	line_spacing = 1.2,
-	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = mod.new_combo_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
+	offset = { 0, 0, 0 },
 }
 
 local styleComboCounterLabel = {
 	line_spacing = 1.2,
-	font_size = font_size/2,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = mod.default_color,
 	size = size,
 	text_horizontal_alignment = "center",
 	text_vertical_alignment = "center",
+	offset = font_offset,
 }
 
 local styleTest = {
 	line_spacing = 1.2,
-	font_size = font_size,
 	drop_shadow = true,
 	font_type = "machine_medium",
 	text_color = mod.default_color,
@@ -261,7 +258,6 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 		scenegraph_definition = scenegraph_definition,
 		widget_definitions = widget_definitions,
 	})
-	self.is_in_hub = mod._is_in_hub()
 	self.combo_timer = 0
 	self.timer_running = false
 	self.combo_timer_percentage = 0
@@ -272,15 +268,34 @@ HudElementKillCount.init = function(self, parent, draw_layer, start_scale)
 	self.new_highest_kill_combo = false
 
 	mod.add_to_killcounter = function()
-		self:add_to_killcounter()
+		self.anim_kill_combo = self.anim_kill_combo + 1
+		mod.kill_counter = mod.kill_counter + 1
+
+		self:_start_combo_timer()
 	end
-end
 
-HudElementKillCount.add_to_killcounter = function(self)
-	self.anim_kill_combo = self.anim_kill_combo + 1
-	mod.kill_counter = mod.kill_counter + 1
+	mod.apply_widget_settings = function()
+		local font_size = mod.label_size
 
-	self:_start_combo_timer()
+		size[2] = font_size
+
+		local widgets = self._widgets_by_name
+		widgets.killCounter.style.text.font_size = font_size
+		widgets.killCounterLabel.style.text.font_size = font_size/2
+		widgets.animatedCounter.style.text.font_size = font_size
+		widgets.killCombo.style.text.font_size = font_size
+		widgets.newKillCombo.style.text.font_size = font_size
+		widgets.killComboLabel.style.text.font_size = font_size/2
+		widgets.testWidget.style.text.font_size = font_size
+
+		font_offset[2] = mod.label_y_offset
+
+		local anim_offset = mod.anim_offset
+		widgets.animatedCounter.style.text.offset[1] = anim_offset[1]
+		widgets.animatedCounter.style.text.offset[2] = anim_offset[2]
+		widgets.animatedCounter.style.text.offset[3] = anim_offset[3]
+	end
+	mod.apply_widget_settings()
 end
 
 HudElementKillCount._start_combo_timer = function(self)
@@ -303,7 +318,7 @@ HudElementKillCount._update_combo_timer = function(self, dt)
 		self.combo_timer = 0
 		self.combo_timer_percentage = 0
 		
-		self._widgets_by_name.animatedCounter.style.text.offset[2] = 0
+		self._widgets_by_name.animatedCounter.style.text.offset[2] = mod.anim_offset[2]
 		self._widgets_by_name.animatedCounter.alpha_multiplier = 1
 		self.animating = false
 		if mod.highest_kill_combo < self.anim_kill_combo then
@@ -334,18 +349,6 @@ end
 
 HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings, input_service)
 	HudElementKillCount.super.update(self, dt, t, ui_renderer, render_settings, input_service)	
-
-	if self.is_in_hub then		
-		self._widgets_by_name.killCounter.content.text = tostring("")
-		self._widgets_by_name.killCounterLabel.content.text = tostring("")
-		self._widgets_by_name.killCombo.content.text = tostring("")
-		self._widgets_by_name.killComboLabel.content.text = tostring("")
-		self._widgets_by_name.animatedCounter.content.text = tostring("")
-		self._widgets_by_name.newKillCombo.content.text = tostring("")
-
-		self._widgets_by_name.testWidget.content.text = tostring("")
-		return
-	end
 	-- self:_test_dt(self._widgets_by_name.testWidget)
 
 	if self.timer_running then
@@ -365,10 +368,10 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		if mod.show_cringe then
 			font_scale = _scale_by_cringe_factor(math.max(anim_font_scale, self.anim_kill_combo))
 		end
-		self._widgets_by_name.animatedCounter.style.text.font_size = (font_size * anim_font_scale) + math.ceil(font_scale - 0.5)
+		self._widgets_by_name.animatedCounter.style.text.font_size = (mod.label_size * anim_font_scale) + math.ceil(font_scale - 0.5)
 
 		self._widgets_by_name.animatedCounter.alpha_multiplier = alpha
-		self._widgets_by_name.animatedCounter.style.text.offset[2] = -anim_pos_y_offset
+		self._widgets_by_name.animatedCounter.style.text.offset[2] = mod.anim_offset[2] - anim_pos_y_offset
 
 		if mod.show_cringe then
 			if (self.anim_kill_combo >= 100) then
@@ -377,10 +380,11 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 				
 				local shake_intensity = (mod.cringe_factor / 10) * 0.6
 				if math.ceil(t * 20) % 2 == 0 then
+					local base_offset = mod.anim_offset
 					self._widgets_by_name.animatedCounter.style.text.offset = {
-						math.random(-shake_intensity, shake_intensity),
-						math.random(-shake_intensity, shake_intensity) - anim_pos_y_offset,
-						math.random(-shake_intensity, shake_intensity)
+						base_offset[1] + math.random(-shake_intensity, shake_intensity),
+						base_offset[2] + math.random(-shake_intensity, shake_intensity) - anim_pos_y_offset,
+						base_offset[3] + math.random(-shake_intensity, shake_intensity)
 					}
 				end
 			end
@@ -406,14 +410,14 @@ HudElementKillCount.update = function(self, dt, t, ui_renderer, render_settings,
 		self._widgets_by_name.killCombo.content.text = tostring("")
 		self._widgets_by_name.killComboLabel.content.text = tostring("")
 	end
-	if self.new_highest_kill_combo and mod.show_kill_combos and (self._widgets_by_name.newKillCombo.style.text.offset[2] > -80) then
-		local comboAlpha = (self._widgets_by_name.newKillCombo.style.text.offset[2] * -1) / 80
+	if self.new_highest_kill_combo and mod.show_kill_combos and (self._widgets_by_name.newKillCombo.style.text.offset[2] > mod.label_y_offset - 80) then
+		local comboAlpha = (mod.label_y_offset - self._widgets_by_name.newKillCombo.style.text.offset[2]) / 80
 		self._widgets_by_name.newKillCombo.alpha_multiplier = 1 - comboAlpha
 		self._widgets_by_name.newKillCombo.style.text.offset[2] = self._widgets_by_name.newKillCombo.style.text.offset[2] - comboAlpha * 2 - 0.2
 		self._widgets_by_name.newKillCombo.content.text = tostring("+" .. tostring(mod.highest_kill_combo))
 	else
 		self.new_highest_kill_combo = false
-		self._widgets_by_name.newKillCombo.style.text.offset[2] = 0
+		self._widgets_by_name.newKillCombo.style.text.offset[2] = mod.label_y_offset
 		self._widgets_by_name.newKillCombo.content.text = tostring("")
 	end
 end

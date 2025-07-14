@@ -4,28 +4,12 @@
 
 local mod = get_mod("kill_tracker")
 
-mod:io_dofile("kill_tracker/scripts/mods/kill_tracker/utils")
-
 local Breed = mod:original_require("scripts/utilities/breed")
 
 mod.kill_counter = 0
 mod.highest_kill_combo = 0
 mod.kill_counter_label = mod:localize("kill_count_hud")
 mod.kill_combo_label = mod:localize("kill_combo_hud")
-
-mod:register_hud_element({
-	filename = "kill_tracker/scripts/mods/kill_tracker/HudElementKillCount",
-	class_name = "HudElementKillCount",
-	visibility_groups = {
-		"tactical_overlay",
-		"alive",
-		"communication_wheel",
-	},
-	use_hud_scale = true,
-	validation_function = function(params)
-		return Managers.state.game_mode:game_mode_name() ~= "hub"
-	end
-})
 
 local function apply_settings(reset_stats)
 	if reset_stats then
@@ -36,8 +20,17 @@ local function apply_settings(reset_stats)
 	mod.min_kill_combo = mod:get("min_kill_combo")
 	mod.show_cringe = mod:get("show_cringe")
 	mod.cringe_factor = mod:get("cringe_factor")
-	mod.anim_x_offset = mod:get("anim_container_x_offset")
-	mod.anim_y_offset = mod:get("anim_container_y_offset")
+
+	if mod.anim_offset then
+		mod.anim_offset[1] = mod:get("anim_container_x_offset")
+		mod.anim_offset[2] = mod:get("anim_container_y_offset")
+	else
+		mod.anim_offset = {
+			mod:get("anim_container_x_offset"),
+			mod:get("anim_container_y_offset"),
+			10
+		}
+	end
 
 	--From 'color_definitions' (Darktide Source Code)
 	local color_code = mod:get("anim_color")
@@ -61,22 +54,29 @@ local function apply_settings(reset_stats)
 	mod.anim_color = Color[color_code](transparency,true)
 	mod.fade_color = Color[color_code](transparency,true)
 	mod.new_combo_color = Color.dark_turquoise(255, true)
+
+	if mod.apply_widget_settings then
+		mod.apply_widget_settings()
+	end
 end
 
-mod.reload_mods = function()
-	apply_settings(true)
-end
-
-mod.on_all_mods_loaded = function()
-	apply_settings(true)
-end
+apply_settings(true)
+mod:register_hud_element({
+	filename = "kill_tracker/scripts/mods/kill_tracker/HudElementKillCount",
+	class_name = "HudElementKillCount",
+	visibility_groups = {
+		"tactical_overlay",
+		"alive",
+		"communication_wheel",
+	},
+	use_hud_scale = true,
+	validation_function = function(params)
+		return Managers.state.game_mode:game_mode_name() ~= "hub"
+	end
+})
 
 mod.on_setting_changed = function()
 	apply_settings(false)
-end
-
-mod.add_to_killcounter = function()
-	mod:notify("wtf how did u get here")
 end
 
 function mod.on_game_state_changed(status, state_name)
@@ -101,7 +101,7 @@ function(self, damage_profile, attacked_unit, attacking_unit, attack_direction, 
 	local unit_data_extension = ScriptUnit.has_extension(attacked_unit, "unit_data_system")
 	local breed_or_nil = unit_data_extension and unit_data_extension:breed()
 	local target_is_minion = breed_or_nil and Breed.is_minion(breed_or_nil)		
-	if target_is_minion then
+	if target_is_minion and mod.add_to_killcounter then
 		mod.add_to_killcounter()
 	end	
 end)
