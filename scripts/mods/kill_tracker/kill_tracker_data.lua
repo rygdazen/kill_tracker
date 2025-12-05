@@ -32,6 +32,12 @@ table.sort(option_table.color, function(a, b)
     return a.text < b.text
 end)
 
+for i = #option_table.color, 1, -1 do
+    if option_table.color[i].value == "terminal_text_header" then
+        table.remove(option_table.color, i)
+    end
+end
+
 table.insert(option_table.color, 1, { text = "terminal_text_header", value = "terminal_text_header" })
 
 local data = {

@@ -1,4 +1,4 @@
--- version 0.7.0
+-- version 0.7.2
 
 -- TODO: add setting for reset kills on death
 
